@@ -5,7 +5,7 @@
 
 sf::CircleShape CreateStone(const sf::Vector2f &position, int type)
 {
-    float stoneSize = 40.f;
+    float stoneSize = 32.5f;
     float stoneOutlineThickness = 4.f;
     sf::CircleShape stone(stoneSize);
     if (type == 1)
@@ -28,7 +28,8 @@ int main()
     window.setFramerateLimit(20);
     sf::Color backgroundColor(245, 240, 225);
     sf::Vector2u windowSize = window.getSize();
-    sf::Vector2f boardSize(1200.f, 1200.f);
+    float fBoardSize = 1200.f;
+    sf::Vector2f boardSize(fBoardSize, fBoardSize);
     sf::Vector2f boardPosition(windowSize.x / 2 - boardSize.x / 2, windowSize.y / 2 - boardSize.y / 2);
 
     sf::Color boardColor(202, 164, 114);
@@ -39,24 +40,25 @@ int main()
     // Draw 30 lines (15 for horizontal, 15 for vertical)
     sf::RectangleShape lines[30];
     float lineThickness = 5.f;
-    float spacing = boardSize.x / 14.f;
+    float spacing = fBoardSize / 16.f;
 
     for (int i = 0; i < 30; i++)
-    {
+    {   // Vertical lines
         if (i < 15)
         {
-            lines[i] = sf::RectangleShape(sf::Vector2f(lineThickness, boardSize.y));
-            lines[i].setPosition(boardPosition.x + spacing * i, boardPosition.y);
+            lines[i] = sf::RectangleShape(sf::Vector2f(lineThickness, fBoardSize - spacing * 2));
+            lines[i].setPosition(boardPosition.x + spacing + spacing * i, boardPosition.y + spacing);
         }
+        // Horizontal lines
         else
         {
-            lines[i] = sf::RectangleShape(sf::Vector2f(boardSize.x, lineThickness));
-            lines[i].setPosition(boardPosition.x, boardPosition.y + spacing * (i - 15));
+            lines[i] = sf::RectangleShape(sf::Vector2f(fBoardSize - spacing * 2 + lineThickness, lineThickness));
+            lines[i].setPosition(boardPosition.x + spacing, boardPosition.y + spacing + spacing * (i - 15));
         }
         lines[i].setFillColor(sf::Color::Black);
     }
-
-    float stoneSize = 40.f;
+    std::cout << "Spacing: " << spacing << std::endl;
+    float stoneSize = 32.5f;
     int grid[15][15];
     sf::CircleShape *stoneBuffer[15][15];
 
