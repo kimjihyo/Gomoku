@@ -5,7 +5,8 @@ project(Gomoku)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-deprecated-declarations")
 
-add_executable(${PROJECT_NAME} src/Application.cpp)
+include_directories(src)
+add_executable(${PROJECT_NAME} src/Application.cpp src/Board.cpp src/Stone.cpp)
 
 add_subdirectory(lib/SFML-2.5.1)
 include_directories(include deps/SFML-2.5.1/include)
