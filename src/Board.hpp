@@ -9,6 +9,7 @@ private:
     sf::RectangleShape **lines;
     sf::Text **indexLabels;
     sf::Font font;
+    sf::Vector2f boardPosition;
     const sf::Color BOARD_COLOR;
 
 public:
