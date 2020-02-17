@@ -4,7 +4,8 @@
 Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR(sf::Color(202, 164, 114))
 {
     sf::Vector2u windowSize = window.getSize();
-    this->boardPosition = sf::Vector2f(windowSize.x / 2 - BOARD_SIZE / 2, windowSize.y / 2 - BOARD_SIZE / 2);
+    unsigned int xOffset = windowSize.x / 10;
+    this->boardPosition = sf::Vector2f(windowSize.x / 2 - BOARD_SIZE / 2 - xOffset, windowSize.y / 2 - BOARD_SIZE / 2);
     this->boardShape = new sf::RectangleShape(sf::Vector2f(BOARD_SIZE, BOARD_SIZE));
     this->boardShape->setFillColor(BOARD_COLOR);
     this->boardShape->setOutlineThickness(BOARD_OUTLINE_THICKNESS);
@@ -101,4 +102,9 @@ sf::RectangleShape **Board::GetLineShapes() const
 sf::Text **Board::GetIndexLabels() const
 {
     return this->indexLabels;
+}
+
+const sf::Vector2f& Board::GetBoardPosition() const
+{
+    return this->GetBoardShape()->getPosition();
 }

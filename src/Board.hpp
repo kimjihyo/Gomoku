@@ -28,4 +28,5 @@ public:
     sf::RectangleShape *GetBoardShape() const;
     sf::RectangleShape **GetLineShapes() const;
     sf::Text **GetIndexLabels() const;
+    const sf::Vector2f& GetBoardPosition() const;
 };

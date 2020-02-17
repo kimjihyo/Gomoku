@@ -15,6 +15,7 @@ private:
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
     
     int counter;
+    bool shouldDisplayLabels;
 
 public:
     Gomoku(unsigned int windowSizeX, unsigned int windowSizeY);
@@ -26,4 +27,5 @@ private:
     bool placeStone(const sf::Vector2i& position);
     void drawBoard();
     void drawStonesPlaced();
+    void resetStones();
 };
