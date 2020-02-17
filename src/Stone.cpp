@@ -1,9 +1,13 @@
 #include "Stone.hpp"
 
-Stone::Stone(const sf::Vector2f &position, int count, unsigned int xIndex, unsigned int yIndex)
+Stone::Stone(float _stoneSize, const sf::Vector2f &position, int count, unsigned int xIndex, unsigned int yIndex)
     : position(position), count(count), xIndex(xIndex), yIndex(yIndex)
 {
-    shapeBuffer = new sf::CircleShape(STONE_SIZE);
+    this->stoneSize = _stoneSize;
+    this->stoneOutlineThickness = this->stoneSize / 6.f;
+    this->labelCharacterSize = this->stoneSize;
+
+    shapeBuffer = new sf::CircleShape(stoneSize);
     labelBuffer = nullptr;
     if (count % 2 == 1)
     {
@@ -14,7 +18,7 @@ Stone::Stone(const sf::Vector2f &position, int count, unsigned int xIndex, unsig
         shapeBuffer->setFillColor(sf::Color::White);
     }
     shapeBuffer->setPosition(position);
-    shapeBuffer->setOutlineThickness(STONE_OUTLINE_THICKNESS);
+    shapeBuffer->setOutlineThickness(stoneOutlineThickness);
     shapeBuffer->setOutlineColor(sf::Color::Black);
 }
 Stone::~Stone()
@@ -43,15 +47,15 @@ void Stone::EnableLabel(const sf::Font &font)
 {
     labelBuffer = new sf::Text();
     labelBuffer->setFont(font);
-    labelBuffer->setCharacterSize(LABEL_CHARACTER_SIZE);
+    labelBuffer->setCharacterSize(labelCharacterSize);
     labelBuffer->setString(std::to_string(this->count));
     labelBuffer->setStyle(sf::Text::Bold);
 
     sf::FloatRect boundingBox = labelBuffer->getLocalBounds();
     labelBuffer->setOrigin(boundingBox.left + boundingBox.width / 2.0f,
                            boundingBox.top + boundingBox.height / 2.0f);
-    labelBuffer->setPosition(sf::Vector2f(this->position.x + this->STONE_SIZE,
-                                          this->position.y + this->STONE_SIZE));
+    labelBuffer->setPosition(sf::Vector2f(this->position.x + this->stoneSize,
+                                          this->position.y + this->stoneSize));
 
     if (this->count % 2 == 0)
     {
@@ -67,7 +71,7 @@ void Stone::Highlight()
     }
 
     shapeBuffer->setOutlineColor(sf::Color::Red);
-    shapeBuffer->setOutlineThickness(STONE_OUTLINE_THICKNESS * 2);
+    shapeBuffer->setOutlineThickness(stoneOutlineThickness * 2);
 }
 
 sf::CircleShape *Stone::GetShapeBufferPointer() const

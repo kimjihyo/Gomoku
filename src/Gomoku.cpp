@@ -38,18 +38,23 @@ Gomoku::~Gomoku()
 void Gomoku::StartGame()
 {
     const sf::Vector2f &boardPosition = this->board->GetBoardPosition();
-    sf::Vector2f buttonPosition(boardPosition.x + Board::BOARD_SIZE + 50.f, boardPosition.y);
-    sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + 120.f);
-    sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + 120.f);
+    sf::Vector2f buttonSize(this->board->GetBoardSize()/ 4.f, this->board->GetBoardSize() / 12.f);
+
+    sf::Vector2f buttonPosition(boardPosition.x + this->board->GetBoardSize() + buttonSize.y, boardPosition.y);
+    sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
 
     Button resetButton("RESET STONES", this->font);
     resetButton.SetPosition(buttonPosition);
+    resetButton.SetSize(buttonSize);
 
     Button labelToggleButton("TOGGLE LABELS", this->font);
     labelToggleButton.SetPosition(buttonPosition2);
+    labelToggleButton.SetSize(buttonSize);
 
     Button undoButton("UNDO", this->font);
     undoButton.SetPosition(buttonPosition3);
+    undoButton.SetSize(buttonSize);
 
     while (this->window->isOpen())
     {
@@ -132,14 +137,15 @@ void Gomoku::drawButton(const Button &button)
 
 bool Gomoku::placeStone(const sf::Vector2i &localPosition)
 {
+    float stoneSize = this->board->GetBoardSize() / 38.f;
     sf::Vector2i stoneIndex = this->board->CalculateStoneIndexByPosition(localPosition);
-    sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, Stone::STONE_SIZE);
+    sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, stoneSize);
 
     if (this->stones[stoneIndex.y][stoneIndex.x] == nullptr)
     {
         if (stoneIndex.y > -1 && stoneIndex.y < Board::NUM_LINES && stoneIndex.x > -1 && stoneIndex.x < Board::NUM_LINES)
         {
-            this->stones[stoneIndex.y][stoneIndex.x] = new Stone(sf::Vector2f(positionToPlace.x, positionToPlace.y),
+            this->stones[stoneIndex.y][stoneIndex.x] = new Stone(stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
                                                                  ++counter, stoneIndex.x, stoneIndex.y);
             this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
             this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);

@@ -31,6 +31,7 @@ void Button::SetPosition(const sf::Vector2f &position)
 void Button::SetSize(const sf::Vector2f &size)
 {
     m_ShapeBuffer->setSize(size);
+    m_LabelBuffer->setCharacterSize(size.x / 10.f);
     this->setLabelPosition();
 }
 

@@ -4,11 +4,18 @@
 Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR(sf::Color(202, 164, 114))
 {
     sf::Vector2u windowSize = window.getSize();
+
+    this->boardSize = windowSize.y - 400;
+    this->boardOutlineThickness = this->boardSize / 250.f;
+    this->lineThickness = this->boardOutlineThickness;
+    this->textSize = boardSize / 30.f;
+    this->boardSpacing = boardSize / (NUM_LINES + 1.f);
+
     unsigned int xOffset = windowSize.x / 10;
-    this->boardPosition = sf::Vector2f(windowSize.x / 2 - BOARD_SIZE / 2 - xOffset, windowSize.y / 2 - BOARD_SIZE / 2);
-    this->boardShape = new sf::RectangleShape(sf::Vector2f(BOARD_SIZE, BOARD_SIZE));
+    this->boardPosition = sf::Vector2f(windowSize.x / 2 - boardSize / 2 - xOffset, windowSize.y / 2 - boardSize / 2);
+    this->boardShape = new sf::RectangleShape(sf::Vector2f(boardSize, boardSize));
     this->boardShape->setFillColor(BOARD_COLOR);
-    this->boardShape->setOutlineThickness(BOARD_OUTLINE_THICKNESS);
+    this->boardShape->setOutlineThickness(boardOutlineThickness);
     this->boardShape->setOutlineColor(sf::Color::Black);
     this->boardShape->setPosition(boardPosition);
     this->lines = new sf::RectangleShape *[NUM_LINES * 2];
@@ -21,32 +28,32 @@ Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLO
         if (i < NUM_LINES)
         {
             this->lines[i] =
-                new sf::RectangleShape(sf::Vector2f(LINE_THICKNESS, BOARD_SIZE - BOARD_SPACING * 2));
+                new sf::RectangleShape(sf::Vector2f(lineThickness, boardSize - boardSpacing * 2));
 
-            this->lines[i]->setPosition(boardPosition.x + BOARD_SPACING + BOARD_SPACING * i,
-                                        boardPosition.y + BOARD_SPACING);
+            this->lines[i]->setPosition(boardPosition.x + boardSpacing + boardSpacing * i,
+                                        boardPosition.y + boardSpacing);
 
             this->indexLabels[i]->setString(std::to_string(i + 1));
-            this->indexLabels[i]->setPosition(boardPosition.x + BOARD_SPACING + BOARD_SPACING * i - TEXT_SIZE / 2,
-                                              boardPosition.y - BOARD_SPACING);
+            this->indexLabels[i]->setPosition(boardPosition.x + boardSpacing + boardSpacing * i - textSize / 2,
+                                              boardPosition.y - boardSpacing);
         }
         else
         {
             this->lines[i] =
-                new sf::RectangleShape(sf::Vector2f(BOARD_SIZE - BOARD_SPACING * 2 + LINE_THICKNESS, LINE_THICKNESS));
-            this->lines[i]->setPosition(boardPosition.x + BOARD_SPACING,
-                                        boardPosition.y + BOARD_SPACING + BOARD_SPACING * (i - 15));
+                new sf::RectangleShape(sf::Vector2f(boardSize - boardSpacing * 2 + lineThickness, lineThickness));
+            this->lines[i]->setPosition(boardPosition.x + boardSpacing,
+                                        boardPosition.y + boardSpacing + boardSpacing * (i - 15));
             std::string label;
             label = (char)(65 + i - 15);
             this->indexLabels[i]->setString(label);
-            this->indexLabels[i]->setPosition(boardPosition.x - BOARD_SPACING,
-                                              boardPosition.y + BOARD_SPACING + BOARD_SPACING * (i - 15) - TEXT_SIZE / 2);
+            this->indexLabels[i]->setPosition(boardPosition.x - boardSpacing,
+                                              boardPosition.y + boardSpacing + boardSpacing * (i - 15) - textSize / 2);
         }
 
         this->lines[i]->setFillColor(sf::Color::Black);
         this->indexLabels[i]->setFont(font);
         this->indexLabels[i]->setStyle(sf::Text::Bold);
-        this->indexLabels[i]->setCharacterSize(TEXT_SIZE);
+        this->indexLabels[i]->setCharacterSize(textSize);
         this->indexLabels[i]->setFillColor(sf::Color::Black);
     }
 }
@@ -75,8 +82,8 @@ Board::~Board()
 
 sf::Vector2i Board::CalculateStoneIndexByPosition(const sf::Vector2i &position) const
 {
-    float predictedXPos = (position.x - this->boardPosition.x - BOARD_SPACING) / BOARD_SPACING;
-    float predictedYPos = (position.y - this->boardPosition.y - BOARD_SPACING) / BOARD_SPACING;
+    float predictedXPos = (position.x - this->boardPosition.x - boardSpacing) / boardSpacing;
+    float predictedYPos = (position.y - this->boardPosition.y - boardSpacing) / boardSpacing;
     int indexX = roundf(predictedXPos);
     int indexY = roundf(predictedYPos);
     return sf::Vector2i(indexX, indexY);
@@ -84,8 +91,8 @@ sf::Vector2i Board::CalculateStoneIndexByPosition(const sf::Vector2i &position) 
 
 sf::Vector2f Board::CalculateStonePositionToPlace(const sf::Vector2i &stoneIndex, float stoneSize) const
 {
-    float positionToPlaceX = stoneIndex.x * BOARD_SPACING + this->boardPosition.x - stoneSize + BOARD_SPACING;
-    float positionToPlaceY = stoneIndex.y * BOARD_SPACING + this->boardPosition.y - stoneSize + BOARD_SPACING;
+    float positionToPlaceX = stoneIndex.x * boardSpacing + this->boardPosition.x - stoneSize + boardSpacing;
+    float positionToPlaceY = stoneIndex.y * boardSpacing + this->boardPosition.y - stoneSize + boardSpacing;
     return sf::Vector2f(positionToPlaceX, positionToPlaceY);
 }
 
@@ -107,4 +114,9 @@ sf::Text **Board::GetIndexLabels() const
 const sf::Vector2f& Board::GetBoardPosition() const
 {
     return this->GetBoardShape()->getPosition();
+}
+
+float Board::GetBoardSize() const
+{
+    return this->boardSize;
 }

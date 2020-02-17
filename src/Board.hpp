@@ -11,14 +11,14 @@ private:
     sf::Font font;
     sf::Vector2f boardPosition;
     const sf::Color BOARD_COLOR;
+    float boardSize;
+    float boardOutlineThickness;
+    float boardSpacing;
+    float lineThickness;
+    float textSize;
 
 public:
     static constexpr unsigned short NUM_LINES = 15;
-    static constexpr float BOARD_SIZE = 1200.f;
-    static constexpr float BOARD_OUTLINE_THICKNESS = 4.f;
-    static constexpr float BOARD_SPACING = BOARD_SIZE / (NUM_LINES + 1.f);
-    static constexpr float LINE_THICKNESS = 4.f;
-    static constexpr float TEXT_SIZE = 35.f;
 
 public:
     Board(const sf::RenderWindow &window, const sf::Font &font);
@@ -28,5 +28,6 @@ public:
     sf::RectangleShape *GetBoardShape() const;
     sf::RectangleShape **GetLineShapes() const;
     sf::Text **GetIndexLabels() const;
-    const sf::Vector2f& GetBoardPosition() const;
+    const sf::Vector2f &GetBoardPosition() const;
+    float GetBoardSize() const;
 };

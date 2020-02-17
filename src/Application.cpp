@@ -2,7 +2,7 @@
 
 int main()
 {
-    Gomoku gomoku(1920, 1920);
+    Gomoku gomoku(1200, 1200);
     gomoku.StartGame();
 
     return 0;
