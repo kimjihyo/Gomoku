@@ -22,6 +22,7 @@ public:
     ~Stone();
     unsigned int getXIndex() const;
     unsigned int getYIndex() const;
+    unsigned int GetCount() const;
     void EnableLabel(const sf::Font &font);
     void Highlight();
     sf::CircleShape *GetShapeBufferPointer() const;

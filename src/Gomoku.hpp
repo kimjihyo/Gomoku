@@ -1,8 +1,10 @@
 #pragma once
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "Board.hpp"
 #include "Stone.hpp"
+#include "Button.hpp"
 
 class Gomoku
 {
@@ -13,6 +15,7 @@ private:
 
     Board *board;
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
+    std::vector<Stone*> stonesInOrder;
     
     int counter;
     bool shouldDisplayLabels;
@@ -27,5 +30,7 @@ private:
     bool placeStone(const sf::Vector2i& position);
     void drawBoard();
     void drawStonesPlaced();
+    void drawButton(const Button& button);
     void resetStones();
+    void undoLastStone();
 };

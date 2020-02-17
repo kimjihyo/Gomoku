@@ -7,7 +7,9 @@
 #include "Button.hpp"
 
 Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
-    : BACKGROUND_COLOR(sf::Color(245, 240, 225)), counter(0), shouldDisplayLabels(true)
+    : BACKGROUND_COLOR(sf::Color(245, 240, 225)),
+      counter(0),
+      shouldDisplayLabels(true)
 {
     this->window = new sf::RenderWindow(sf::VideoMode(windowSizeX, windowSizeY), "Gomoku", sf::Style::Close);
     this->window->setFramerateLimit(20);
@@ -38,12 +40,16 @@ void Gomoku::StartGame()
     const sf::Vector2f &boardPosition = this->board->GetBoardPosition();
     sf::Vector2f buttonPosition(boardPosition.x + Board::BOARD_SIZE + 50.f, boardPosition.y);
     sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + 120.f);
+    sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + 120.f);
 
     Button resetButton("RESET STONES", this->font);
     resetButton.SetPosition(buttonPosition);
 
     Button labelToggleButton("TOGGLE LABELS", this->font);
     labelToggleButton.SetPosition(buttonPosition2);
+
+    Button undoButton("UNDO", this->font);
+    undoButton.SetPosition(buttonPosition3);
 
     while (this->window->isOpen())
     {
@@ -53,11 +59,15 @@ void Gomoku::StartGame()
             if (event.mouseButton.button == sf::Mouse::Left && event.type == sf::Event::MouseButtonReleased)
             {
                 this->placeStone(sf::Mouse::getPosition(*this->window));
+
                 resetButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->resetStones();
                 });
                 labelToggleButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->shouldDisplayLabels = !this->shouldDisplayLabels;
+                });
+                undoButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    this->undoLastStone();
                 });
             }
             if (event.type == sf::Event::Closed)
@@ -68,10 +78,9 @@ void Gomoku::StartGame()
         this->window->clear(BACKGROUND_COLOR);
         this->drawBoard();
         this->drawStonesPlaced();
-        this->window->draw(resetButton.GetButtonShape());
-        this->window->draw(resetButton.GetLabelShape());
-        this->window->draw(labelToggleButton.GetButtonShape());
-        this->window->draw(labelToggleButton.GetLabelShape());
+        this->drawButton(resetButton);
+        this->drawButton(labelToggleButton);
+        this->drawButton(undoButton);
         this->window->display();
     }
 }
@@ -115,6 +124,12 @@ void Gomoku::drawStonesPlaced()
     }
 }
 
+void Gomoku::drawButton(const Button &button)
+{
+    this->window->draw(button.GetButtonShape());
+    this->window->draw(button.GetLabelShape());
+}
+
 bool Gomoku::placeStone(const sf::Vector2i &localPosition)
 {
     sf::Vector2i stoneIndex = this->board->CalculateStoneIndexByPosition(localPosition);
@@ -127,6 +142,7 @@ bool Gomoku::placeStone(const sf::Vector2i &localPosition)
             this->stones[stoneIndex.y][stoneIndex.x] = new Stone(sf::Vector2f(positionToPlace.x, positionToPlace.y),
                                                                  ++counter, stoneIndex.x, stoneIndex.y);
             this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
+            this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
             return true;
         }
     }
@@ -147,4 +163,18 @@ void Gomoku::resetStones()
         }
     }
     this->counter = 0;
+}
+
+void Gomoku::undoLastStone()
+{
+    if (!stonesInOrder.empty())
+    {
+        Stone *prevStone = stonesInOrder.back();
+        stonesInOrder.pop_back();
+        unsigned int x = prevStone->getXIndex();
+        unsigned int y = prevStone->getYIndex();
+        delete this->stones[y][x];
+        this->stones[y][x] = nullptr;
+        this->counter--;
+    }
 }

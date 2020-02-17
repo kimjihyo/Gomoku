@@ -79,3 +79,8 @@ sf::Text *Stone::GetLabelBufferPointer() const
 {
     return labelBuffer;
 }
+
+unsigned int Stone::GetCount() const
+{
+    return this->count;
+}
