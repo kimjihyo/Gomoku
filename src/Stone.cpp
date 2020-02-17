@@ -47,9 +47,11 @@ void Stone::EnableLabel(const sf::Font &font)
     labelBuffer->setString(std::to_string(this->count));
     labelBuffer->setStyle(sf::Text::Bold);
 
-    sf::FloatRect boundingBox = labelBuffer->getGlobalBounds();
-    labelBuffer->setPosition(sf::Vector2f(this->position.x + STONE_SIZE / 2 - boundingBox.left,
-                                          this->position.y + STONE_SIZE / 2 - boundingBox.top));
+    sf::FloatRect boundingBox = labelBuffer->getLocalBounds();
+    labelBuffer->setOrigin(boundingBox.left + boundingBox.width / 2.0f,
+                           boundingBox.top + boundingBox.height / 2.0f);
+    labelBuffer->setPosition(sf::Vector2f(this->position.x + this->STONE_SIZE,
+                                          this->position.y + this->STONE_SIZE));
 
     if (this->count % 2 == 0)
     {

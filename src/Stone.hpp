@@ -15,7 +15,7 @@ private:
 public:
     static constexpr float STONE_SIZE = 32.5f;
     static constexpr float STONE_OUTLINE_THICKNESS = 4.f;
-    static constexpr float LABEL_CHARACTER_SIZE = 40.f;
+    static constexpr float LABEL_CHARACTER_SIZE = 35.f;
 
 public:
     Stone(const sf::Vector2f &position, int count, unsigned int xIndex, unsigned int yIndex);
