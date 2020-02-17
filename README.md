@@ -1,5 +1,7 @@
 # Gomoku
 
+![Image description](./gomoku_screenshot.png)
+
 ### How to build the project
 1. Create a build folder 
 ```
