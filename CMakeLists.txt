@@ -9,6 +9,6 @@ include_directories(src)
 add_executable(${PROJECT_NAME} src/Application.cpp src/Board.cpp src/Stone.cpp src/Gomoku.cpp src/Button.cpp)
 
 add_subdirectory(lib/SFML-2.5.1)
-include_directories(include deps/SFML-2.5.1/include)
+include_directories(include lib/SFML-2.5.1/include)
 
 target_link_libraries(${PROJECT_NAME} sfml-system sfml-window sfml-graphics)
