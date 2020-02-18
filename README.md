@@ -3,6 +3,12 @@
 ![Image description](./gomoku_screenshot.png)
 
 ### How to build the project
+It is required to have FreeType library downloaded to build the program. <br>
+If it is not installed on your device (Mac), Execute the following command in the terminal.
+```
+brew install freetype
+```
+
 1. Create a build folder 
 ```
 mkdir build
