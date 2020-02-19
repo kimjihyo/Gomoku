@@ -71,7 +71,7 @@ void Stone::Highlight()
     }
 
     shapeBuffer->setOutlineColor(sf::Color::Red);
-    shapeBuffer->setOutlineThickness(stoneOutlineThickness * 2);
+    shapeBuffer->setOutlineThickness(stoneOutlineThickness * 1.5f);
 }
 
 sf::CircleShape *Stone::GetShapeBufferPointer() const

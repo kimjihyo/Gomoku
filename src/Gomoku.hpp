@@ -5,6 +5,7 @@
 #include "Board.hpp"
 #include "Stone.hpp"
 #include "Button.hpp"
+#include "GomokuRule.hpp"
 
 class Gomoku
 {
@@ -15,6 +16,7 @@ private:
 
     Board *board;
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
+    GomokuRule gomokuRule;
     std::vector<Stone*> stonesInOrder;
     
     int counter;
