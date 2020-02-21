@@ -3,13 +3,12 @@
 #include "Stone.hpp"
 #include "Board.hpp"
 
-GomokuRule::GomokuRule() : m_Stones(nullptr), m_IsGameEnded(false)
+GomokuRule::GomokuRule() : m_Stones(nullptr)
 {
 }
 
-GomokuRule::GomokuRule(Stone *stones[][Board::NUM_LINES]) : m_IsGameEnded(false)
+GomokuRule::GomokuRule(Stone *stones[][Board::NUM_LINES]) : m_Stones(stones)
 {
-    m_Stones = stones;
 }
 
 GomokuRule::~GomokuRule()
@@ -18,7 +17,6 @@ GomokuRule::~GomokuRule()
 
 void GomokuRule::Reset()
 {
-    m_IsGameEnded = false;
     m_FiveStonesInRow.clear();
 }
 
@@ -27,15 +25,9 @@ void GomokuRule::SetStones(Stone *stones[][Board::NUM_LINES])
     m_Stones = stones;
 }
 
-bool GomokuRule::IsGameEnded() const
-{
-    return m_IsGameEnded;
-}
-
 bool GomokuRule::CheckIfGameIsEnded(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
 {
-    m_IsGameEnded = this->checkHorizontal(pivotX, pivotY, stoneType) || this->checkVertical(pivotX, pivotY, stoneType);
-    return m_IsGameEnded;
+    return this->checkHorizontal(pivotX, pivotY, stoneType) || this->checkVertical(pivotX, pivotY, stoneType);
 }
 
 const std::vector<Stone *> &GomokuRule::GetFiveStonesInRow() const

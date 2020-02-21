@@ -21,6 +21,7 @@ private:
     
     int counter;
     bool shouldDisplayLabels;
+    bool isGameEnded;
 
 public:
     Gomoku(unsigned int windowSizeX, unsigned int windowSizeY);

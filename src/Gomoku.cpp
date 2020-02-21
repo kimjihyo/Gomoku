@@ -17,6 +17,7 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     this->board = new Board(*window, font);
     this->initStones();
     this->gomokuRule.SetStones(this->stones);
+    this->isGameEnded = false;
 }
 
 Gomoku::~Gomoku()
@@ -58,7 +59,6 @@ void Gomoku::StartGame()
     undoButton.SetSize(buttonSize);
 
     const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
-    sf::Vertex line[2] = {};
 
     while (this->window->isOpen())
     {
@@ -67,16 +67,19 @@ void Gomoku::StartGame()
         {
             if (event.mouseButton.button == sf::Mouse::Left && event.type == sf::Event::MouseButtonReleased)
             {
-                this->placeStone(sf::Mouse::getPosition(*this->window));
-                if (this->gomokuRule.IsGameEnded())
+                if (!this->isGameEnded)
                 {
-                    for (int i = 0; i < fiveStones.size(); i++)
+                    this->placeStone(sf::Mouse::getPosition(*this->window));
+                    if (this->isGameEnded)
                     {
-                        fiveStones.at(i)->Highlight();
+                        for (int i = 0; i < fiveStones.size(); i++)
+                        {
+                            fiveStones.at(i)->Highlight();
+                        }
                     }
                 }
-
                 resetButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    this->isGameEnded = false;
                     this->resetStones();
                 });
                 labelToggleButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
@@ -160,7 +163,7 @@ bool Gomoku::placeStone(const sf::Vector2i &localPosition)
                                                                  ++counter, stoneIndex.x, stoneIndex.y);
             this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
             this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
-            this->gomokuRule.CheckIfGameIsEnded(stoneIndex.x, stoneIndex.y, counter % 2);
+            this->isGameEnded = this->gomokuRule.CheckIfGameIsEnded(stoneIndex.x, stoneIndex.y, counter % 2);
 
             return true;
         }

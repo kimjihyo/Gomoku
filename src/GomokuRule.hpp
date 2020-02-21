@@ -8,7 +8,6 @@ class GomokuRule
 private:
     Stone *(*m_Stones)[Board::NUM_LINES];
     std::vector<Stone*> m_FiveStonesInRow;
-    bool m_IsGameEnded;
 
 public:
     GomokuRule();
@@ -17,7 +16,6 @@ public:
     void Reset();
     void SetStones(Stone *stones[][Board::NUM_LINES]);
     bool CheckIfGameIsEnded(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
-    bool IsGameEnded() const;
     const std::vector<Stone*>& GetFiveStonesInRow() const;
 
 private:
