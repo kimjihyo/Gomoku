@@ -64,6 +64,8 @@ void Gomoku::StartGame()
     Button labelToggleButton("TOGGLE LABELS", this->font);
     labelToggleButton.SetPosition(buttonPosition2);
     labelToggleButton.SetSize(buttonSize);
+    labelToggleButton.MakeButtonToggle();
+    labelToggleButton.Toggle();
 
     Button undoButton("UNDO", this->font);
     undoButton.SetPosition(buttonPosition3);

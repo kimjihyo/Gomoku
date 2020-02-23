@@ -9,6 +9,7 @@ struct Move
 {
     int counter;
     bool isOpen;
+    bool isConnected;
 };
 
 class GomokuRule
