@@ -3,11 +3,11 @@
 #include "Stone.hpp"
 #include "Board.hpp"
 
-GomokuRule::GomokuRule() : m_Stones(nullptr), m_IsGameEnded(false)
+GomokuRule::GomokuRule() : m_Stones(nullptr), m_IsGameEnded(false), m_RuleType(RENJU)
 {
 }
 
-GomokuRule::GomokuRule(Stone *stones[][Board::NUM_LINES]) : m_Stones(stones), m_IsGameEnded(false)
+GomokuRule::GomokuRule(Stone *stones[][Board::NUM_LINES]) : m_Stones(stones), m_IsGameEnded(false), m_RuleType(RENJU)
 {
 }
 
@@ -26,6 +26,11 @@ void GomokuRule::SetStones(Stone *stones[][Board::NUM_LINES])
     m_Stones = stones;
 }
 
+void GomokuRule::SetRuleType(RuleType ruleType)
+{
+    m_RuleType = ruleType;
+}
+
 bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
 {
     std::cout << std::endl;
@@ -38,14 +43,23 @@ bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int
                     verticalMove.counter == 5 ||
                     leftDiagonalMove.counter == 5 ||
                     rightDiagonalMove.counter == 5;
-    
-    if (stoneType == 0)
+
+    if (m_RuleType == RENJU)
+    {
+        if (stoneType == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return !checkDoubleThree(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove) &&
+                   !checkDoubleFour(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove);
+        }
+    }
+    else
     {
         return true;
     }
-
-    return !checkDoubleThree(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove) &&
-           !checkDoubleFour(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove);
 }
 
 bool GomokuRule::GetIsGameEnded() const

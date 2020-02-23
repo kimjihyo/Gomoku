@@ -3,6 +3,8 @@
 #include "Board.hpp"
 #include <vector>
 
+enum RuleType { GOMOKU, RENJU };
+
 struct Move
 {
     int counter;
@@ -15,6 +17,7 @@ private:
     Stone *(*m_Stones)[Board::NUM_LINES];
     std::vector<Stone *> m_FiveStonesInRow;
     bool m_IsGameEnded;
+    RuleType m_RuleType;
 
 public:
     GomokuRule();
@@ -22,6 +25,7 @@ public:
     ~GomokuRule();
     void Reset();
     void SetStones(Stone *stones[][Board::NUM_LINES]);
+    void SetRuleType(RuleType ruleType);
     bool MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
     bool GetIsGameEnded() const;
     const std::vector<Stone *> &GetFiveStonesInRow() const;

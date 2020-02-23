@@ -44,6 +44,8 @@ void Gomoku::StartGame()
     sf::Vector2f buttonPosition(boardPosition.x + this->board->GetBoardSize() + buttonSize.y, boardPosition.y);
     sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + buttonSize.y * 1.5f);
     sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
+    sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
+    sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
 
     Button resetButton("RESET STONES", this->font);
     resetButton.SetPosition(buttonPosition);
@@ -56,6 +58,14 @@ void Gomoku::StartGame()
     Button undoButton("UNDO", this->font);
     undoButton.SetPosition(buttonPosition3);
     undoButton.SetSize(buttonSize);
+
+    Button gomokuButton("GOMOKU", this->font);
+    gomokuButton.SetPosition(gomokuButtonPosition);
+    gomokuButton.SetSize(buttonSize);
+
+    Button renjuButton("RENJU", this->font);
+    renjuButton.SetPosition(renjuButtonPosition);
+    renjuButton.SetSize(buttonSize);
 
     const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
 
@@ -87,6 +97,14 @@ void Gomoku::StartGame()
                 undoButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->undoLastStone();
                 });
+                gomokuButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    std::cout << "The game rule has been changed to GOMOKU" << std::endl;
+                    this->gomokuRule.SetRuleType(GOMOKU);
+                });
+                renjuButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    std::cout << "The game rule has been changed to RENJU" << std::endl;
+                    this->gomokuRule.SetRuleType(RENJU);
+                });
             }
             if (event.type == sf::Event::Closed)
             {
@@ -99,6 +117,8 @@ void Gomoku::StartGame()
         this->drawButton(resetButton);
         this->drawButton(labelToggleButton);
         this->drawButton(undoButton);
+        this->drawButton(gomokuButton);
+        this->drawButton(renjuButton);
         this->window->display();
     }
 }
