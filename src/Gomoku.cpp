@@ -17,7 +17,6 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     this->board = new Board(*window, font);
     this->initStones();
     this->gomokuRule.SetStones(this->stones);
-    this->isGameEnded = false;
 }
 
 Gomoku::~Gomoku()
@@ -67,10 +66,10 @@ void Gomoku::StartGame()
         {
             if (event.mouseButton.button == sf::Mouse::Left && event.type == sf::Event::MouseButtonReleased)
             {
-                if (!this->isGameEnded)
+                if (!this->gomokuRule.GetIsGameEnded())
                 {
                     this->placeStone(sf::Mouse::getPosition(*this->window));
-                    if (this->isGameEnded)
+                    if (this->gomokuRule.GetIsGameEnded())
                     {
                         for (int i = 0; i < fiveStones.size(); i++)
                         {
@@ -79,7 +78,7 @@ void Gomoku::StartGame()
                     }
                 }
                 resetButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    this->isGameEnded = false;
+                    this->gomokuRule.Reset();
                     this->resetStones();
                 });
                 labelToggleButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
@@ -163,7 +162,10 @@ bool Gomoku::placeStone(const sf::Vector2i &localPosition)
                                                                  ++counter, stoneIndex.x, stoneIndex.y);
             this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
             this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
-            this->isGameEnded = this->gomokuRule.CheckIfGameIsEnded(stoneIndex.x, stoneIndex.y, counter % 2);
+            if (!this->gomokuRule.MakeMove(stoneIndex.x, stoneIndex.y, counter % 2))
+            {
+                this->undoLastStone();
+            }
 
             return true;
         }
