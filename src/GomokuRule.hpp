@@ -28,6 +28,7 @@ public:
     void SetRuleType(RuleType ruleType);
     bool MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
     bool GetIsGameEnded() const;
+    bool GetRuleType() const;
     const std::vector<Stone *> &GetFiveStonesInRow() const;
 
 private:

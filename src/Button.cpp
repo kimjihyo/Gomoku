@@ -4,7 +4,7 @@
 #include <iostream>
 #include <functional>
 
-Button::Button(const char *label, const sf::Font &font)
+Button::Button(const char *label, const sf::Font &font) : m_IsToggleButton(false), m_Toggle(false)
 {
     m_ShapeBuffer = new sf::RectangleShape(sf::Vector2f(400.f, 100.f));
     m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
@@ -54,6 +54,11 @@ const sf::Text &Button::GetLabelShape() const
     return *m_LabelBuffer;
 }
 
+void Button::MakeButtonToggle()
+{
+    m_IsToggleButton = true;
+}
+
 void Button::OnClick(const sf::Vector2i &mousePosition, const std::function<void(void)> &callback)
 {
     if (mousePosition.x >= m_ShapeBuffer->getPosition().x &&
@@ -61,7 +66,20 @@ void Button::OnClick(const sf::Vector2i &mousePosition, const std::function<void
         mousePosition.y >= m_ShapeBuffer->getPosition().y &&
         mousePosition.y <= m_ShapeBuffer->getPosition().y + m_ShapeBuffer->getSize().y)
     {
+        this->Toggle();
         callback();
+    }
+}
+
+void Button::Toggle()
+{
+    m_Toggle = !m_Toggle;
+    if (m_IsToggleButton)
+    {
+        if (m_Toggle)
+            m_ShapeBuffer->setFillColor(sf::Color(13, 71, 161));
+        else
+            m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
     }
 }
 

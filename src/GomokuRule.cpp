@@ -72,6 +72,11 @@ const std::vector<Stone *> &GomokuRule::GetFiveStonesInRow() const
     return m_FiveStonesInRow;
 }
 
+bool GomokuRule::GetRuleType() const
+{
+    return m_RuleType;
+}
+
 Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
 {
     if (m_Stones[pivotY][pivotX] == nullptr)

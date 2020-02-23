@@ -8,6 +8,8 @@ class Button
 private:
     sf::RectangleShape *m_ShapeBuffer;
     sf::Text *m_LabelBuffer;
+    bool m_IsToggleButton;
+    bool m_Toggle;
 public:
     Button(const char* label, const sf::Font& font);
     ~Button();
@@ -18,6 +20,8 @@ public:
     void OnClick(const sf::Vector2i& mousePosition, const std::function<void(void)>& callback);
     const sf::RectangleShape& GetButtonShape() const;
     const sf::Text& GetLabelShape() const;
+    void MakeButtonToggle();
+    void Toggle();
 private:
     void setLabelPosition();
 };

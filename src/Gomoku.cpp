@@ -47,6 +47,16 @@ void Gomoku::StartGame()
     sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
     sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
 
+    sf::Vector2f textPosition(boardPosition.x, boardPosition.y + this->board->GetBoardSize() + 5.f);
+
+    sf::Text myLabel;
+    myLabel.setFont(this->font);
+    myLabel.setPosition(textPosition);
+    myLabel.setString("GOMOKU V.1. Lastly Updated by Jihyo Kim in Feburary 2020.");
+    myLabel.setCharacterSize(24.f);
+    myLabel.setColor(sf::Color::Black);
+    myLabel.setStyle(sf::Text::Bold);
+
     Button resetButton("RESET STONES", this->font);
     resetButton.SetPosition(buttonPosition);
     resetButton.SetSize(buttonSize);
@@ -62,10 +72,13 @@ void Gomoku::StartGame()
     Button gomokuButton("GOMOKU", this->font);
     gomokuButton.SetPosition(gomokuButtonPosition);
     gomokuButton.SetSize(buttonSize);
+    gomokuButton.MakeButtonToggle();
 
     Button renjuButton("RENJU", this->font);
     renjuButton.SetPosition(renjuButtonPosition);
     renjuButton.SetSize(buttonSize);
+    renjuButton.MakeButtonToggle();
+    renjuButton.Toggle();
 
     const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
 
@@ -97,13 +110,21 @@ void Gomoku::StartGame()
                 undoButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->undoLastStone();
                 });
-                gomokuButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    std::cout << "The game rule has been changed to GOMOKU" << std::endl;
-                    this->gomokuRule.SetRuleType(GOMOKU);
+                gomokuButton.OnClick(sf::Mouse::getPosition(*this->window), [this, &renjuButton]() {
+                    if (this->gomokuRule.GetRuleType() != GOMOKU)
+                    {
+                        std::cout << "The game rule has been changed to GOMOKU" << std::endl;
+                        this->gomokuRule.SetRuleType(GOMOKU);
+                        renjuButton.Toggle();
+                    }
                 });
-                renjuButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    std::cout << "The game rule has been changed to RENJU" << std::endl;
-                    this->gomokuRule.SetRuleType(RENJU);
+                renjuButton.OnClick(sf::Mouse::getPosition(*this->window), [this, &gomokuButton]() {
+                    if (this->gomokuRule.GetRuleType() != RENJU)
+                    {
+                        std::cout << "The game rule has been changed to RENJU" << std::endl;
+                        this->gomokuRule.SetRuleType(RENJU);
+                        gomokuButton.Toggle();
+                    }
                 });
             }
             if (event.type == sf::Event::Closed)
@@ -119,6 +140,7 @@ void Gomoku::StartGame()
         this->drawButton(undoButton);
         this->drawButton(gomokuButton);
         this->drawButton(renjuButton);
+        this->window->draw(myLabel);
         this->window->display();
     }
 }
