@@ -21,5 +21,6 @@ public:
 private:
     bool checkHorizontal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
     bool checkVertical(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
-    bool checkDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
+    bool checkLeftDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
+    bool checkRightDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType);
 };

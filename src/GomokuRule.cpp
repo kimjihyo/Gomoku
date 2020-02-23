@@ -27,7 +27,10 @@ void GomokuRule::SetStones(Stone *stones[][Board::NUM_LINES])
 
 bool GomokuRule::CheckIfGameIsEnded(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
 {
-    return this->checkHorizontal(pivotX, pivotY, stoneType) || this->checkVertical(pivotX, pivotY, stoneType);
+    return this->checkHorizontal(pivotX, pivotY, stoneType) ||
+           this->checkVertical(pivotX, pivotY, stoneType) ||
+           this->checkLeftDiagonal(pivotX, pivotY, stoneType) ||
+           this->checkRightDiagonal(pivotX, pivotY, stoneType);
 }
 
 const std::vector<Stone *> &GomokuRule::GetFiveStonesInRow() const
@@ -37,91 +40,85 @@ const std::vector<Stone *> &GomokuRule::GetFiveStonesInRow() const
 
 bool GomokuRule::checkHorizontal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
 {
-    Stone *pivotStone = m_Stones[pivotY][pivotX];
-    if (pivotStone == nullptr)
+    if (m_Stones[pivotY][pivotX] == nullptr)
     {
         return false;
     }
-    int counter = 0;
-    Stone *currentStone = nullptr;
-    bool isGomoku = false;
-    for (int i = 0; i < Board::NUM_LINES; i++)
+
+    int counter = -1;
+    for (int i = pivotX; i > -1 && m_Stones[pivotY][i] != nullptr && m_Stones[pivotY][i]->GetCount() % 2 == stoneType; i--)
     {
-        currentStone = m_Stones[pivotY][i];
-        if (currentStone != nullptr && currentStone->GetCount() % 2 == stoneType)
-        {
-            ++counter;
-            m_FiveStonesInRow.push_back(currentStone);
-            if (counter == 5)
-            {
-                isGomoku = true;
-            }
-            else if (counter > 5)
-            {
-                m_FiveStonesInRow.clear();
-                return false;
-            }
-        }
-        else
-        {
-            if (!isGomoku)
-            {
-                m_FiveStonesInRow.clear();
-            }
-            counter = 0;
-        }
+        counter++;
     }
-    if (isGomoku)
+    for (int i = pivotX; i < Board::NUM_LINES && m_Stones[pivotY][i] != nullptr && m_Stones[pivotY][i]->GetCount() % 2 == stoneType; i++)
     {
-        std::cout << "Gomoku!" << std::endl;
+        counter++;
     }
-    return isGomoku;
+
+    std::cout << "horizontal count: " << counter << std::endl;
+
+    return counter == 5;
 }
 
 bool GomokuRule::checkVertical(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
 {
-    Stone *pivotStone = m_Stones[pivotY][pivotX];
-    if (pivotStone == nullptr)
+    if (m_Stones[pivotY][pivotX] == nullptr)
     {
         return false;
     }
-    int counter = 0;
-    bool isGomoku = false;
-    Stone *currentStone = nullptr;
-    for (int i = 0; i < Board::NUM_LINES; i++)
+
+    int counter = -1;
+    for (int i = pivotY; i > -1 && m_Stones[i][pivotX] != nullptr && m_Stones[i][pivotX]->GetCount() % 2 == stoneType; i--)
     {
-        currentStone = m_Stones[i][pivotX];
-        if (currentStone != nullptr && currentStone->GetCount() % 2 == stoneType)
-        {
-            ++counter;
-            m_FiveStonesInRow.push_back(currentStone);
-            if (counter == 5)
-            {
-                isGomoku = true;
-            }
-            else if (counter > 5)
-            {
-                m_FiveStonesInRow.clear();
-                return false;
-            }
-        }
-        else
-        {
-            if (!isGomoku)
-            {
-                m_FiveStonesInRow.clear();
-            }
-            counter = 0;
-        }
+        counter++;
     }
-    if (isGomoku)
+    for (int i = pivotY; i < Board::NUM_LINES && m_Stones[i][pivotX] != nullptr && m_Stones[i][pivotX]->GetCount() % 2 == stoneType; i++)
     {
-        std::cout << "Gomoku!" << std::endl;
+        counter++;
     }
-    return isGomoku;
+
+    std::cout << "vertical count: " << counter << std::endl;
+
+    return counter == 5;
 }
 
-bool GomokuRule::checkDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
+bool GomokuRule::checkLeftDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
 {
-    
+    if (m_Stones[pivotY][pivotX] == nullptr)
+    {
+        return false;
+    }
+    int counter = -1;
+
+    for (int x = pivotX, y = pivotY; x > -1 && y > -1 && m_Stones[y][x] != nullptr && m_Stones[y][x]->GetCount() % 2 == stoneType; x--, y--)
+    {
+        counter++;
+    }
+    for (int x = pivotX, y = pivotY; x < Board::NUM_LINES && y < Board::NUM_LINES && m_Stones[y][x] != nullptr && m_Stones[y][x]->GetCount() % 2 == stoneType; x++, y++)
+    {
+        counter++;
+    }
+
+    std::cout << "left diagonal count: " << counter << std::endl;
+    return counter == 5;
+}
+
+bool GomokuRule::checkRightDiagonal(const unsigned int pivotX, const unsigned int pivotY, const unsigned int stoneType)
+{
+    if (m_Stones[pivotY][pivotX] == nullptr)
+    {
+        return false;
+    }
+    int counter = -1;
+    for (int x = pivotX, y = pivotY; x < Board::NUM_LINES && y > -1 && m_Stones[y][x] != nullptr && m_Stones[y][x]->GetCount() % 2 == stoneType; x++, y--)
+    {
+        counter++;
+    }
+    for (int x = pivotX, y = pivotY; x > -1 && y < Board::NUM_LINES && m_Stones[y][x] != nullptr && m_Stones[y][x]->GetCount() % 2 == stoneType; x--, y++)
+    {
+        counter++;
+    }
+
+    std::cout << "right diagonal count: " << counter << std::endl;
+    return counter == 5;
 }
