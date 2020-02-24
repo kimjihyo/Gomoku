@@ -106,7 +106,7 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
         }
         if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -132,7 +132,7 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
         }
         if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -176,7 +176,7 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         if (m_Stones[i][pivotX]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -202,7 +202,7 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         if (m_Stones[i][pivotX]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -246,7 +246,7 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -272,7 +272,7 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -316,7 +316,7 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -342,7 +342,7 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward;
+            isOpen = !canMoveForward && counter < 2;
             break;
         }
         if (!canMoveForward)
@@ -365,18 +365,19 @@ bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, 
     {
         counter++;
     }
-    if (vertical.counter == 3 && horizontal.isOpen)
+    if (vertical.counter == 3 && vertical.isOpen)
     {
         counter++;
     }
-    if (leftDiagonal.counter == 3 && horizontal.isOpen)
+    if (leftDiagonal.counter == 3 && leftDiagonal.isOpen)
     {
         counter++;
     }
-    if (rightDiagonal.counter == 3 && horizontal.isOpen)
+    if (rightDiagonal.counter == 3 && rightDiagonal.isOpen)
     {
         counter++;
     }
+    std::cout << std::endl << "checkDoubleThree::counter:: " << counter << std::endl;
     return counter > 1;
 }
 bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal)
@@ -386,15 +387,15 @@ bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, c
     {
         counter++;
     }
-    if (vertical.counter == 4 && horizontal.isOpen)
+    if (vertical.counter == 4 && vertical.isOpen)
     {
         counter++;
     }
-    if (leftDiagonal.counter == 4 && horizontal.isOpen)
+    if (leftDiagonal.counter == 4 && leftDiagonal.isOpen)
     {
         counter++;
     }
-    if (rightDiagonal.counter == 4 && horizontal.isOpen)
+    if (rightDiagonal.counter == 4 && rightDiagonal.isOpen)
     {
         counter++;
     }

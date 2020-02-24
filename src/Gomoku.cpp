@@ -210,7 +210,6 @@ bool Gomoku::placeStone(const sf::Vector2i &localPosition)
             {
                 this->undoLastStone();
             }
-
             return true;
         }
     }
