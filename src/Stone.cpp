@@ -5,7 +5,7 @@ Stone::Stone(float _stoneSize, const sf::Vector2f &position, int count, unsigned
 {
     this->stoneSize = _stoneSize;
     this->stoneOutlineThickness = this->stoneSize / 6.f;
-    this->labelCharacterSize = this->stoneSize;
+    this->labelCharacterSize = this->stoneSize * 2.f;
 
     shapeBuffer = new sf::CircleShape(stoneSize);
     labelBuffer = nullptr;

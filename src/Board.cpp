@@ -1,14 +1,14 @@
 #include "Board.hpp"
 #include <cmath>
 
-Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR(sf::Color(202, 164, 114))
+Board::Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR(sf::Color(202, 164, 114))
 {
     sf::Vector2u windowSize = window.getSize();
 
     this->boardSize = windowSize.y - 400;
     this->boardOutlineThickness = this->boardSize / 250.f;
     this->lineThickness = this->boardOutlineThickness;
-    this->textSize = boardSize / 30.f;
+    this->textSize = boardSize / 15.f;
     this->boardSpacing = boardSize / (NUM_LINES + 1.f);
 
     unsigned int xOffset = windowSize.x / 10;
@@ -34,7 +34,7 @@ Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLO
                                         boardPosition.y + boardSpacing);
 
             this->indexLabels[i]->setString(std::to_string(i + 1));
-            this->indexLabels[i]->setPosition(boardPosition.x + boardSpacing + boardSpacing * i - textSize / 2,
+            this->indexLabels[i]->setPosition(boardPosition.x + boardSpacing + boardSpacing * i,
                                               boardPosition.y - boardSpacing);
         }
         else
@@ -49,6 +49,9 @@ Board:: Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLO
             this->indexLabels[i]->setPosition(boardPosition.x - boardSpacing,
                                               boardPosition.y + boardSpacing + boardSpacing * (i - 15) - textSize / 2);
         }
+        sf::FloatRect boundingBox = this->indexLabels[i]->getLocalBounds();
+        this->indexLabels[i]->setOrigin(boundingBox.left + boundingBox.width / 2.0f,
+                                        boundingBox.top + boundingBox.height / 2.0f);
 
         this->lines[i]->setFillColor(sf::Color::Black);
         this->indexLabels[i]->setFont(font);
@@ -111,7 +114,7 @@ sf::Text **Board::GetIndexLabels() const
     return this->indexLabels;
 }
 
-const sf::Vector2f& Board::GetBoardPosition() const
+const sf::Vector2f &Board::GetBoardPosition() const
 {
     return this->GetBoardShape()->getPosition();
 }

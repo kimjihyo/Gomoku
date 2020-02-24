@@ -13,7 +13,7 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
 {
     this->window = new sf::RenderWindow(sf::VideoMode(windowSizeX, windowSizeY), "Gomoku", sf::Style::Close);
     this->window->setFramerateLimit(20);
-    this->font.loadFromFile("arial.ttf");
+    this->font.loadFromFile("font.ttf");
     this->board = new Board(*window, font);
     this->initStones();
     this->gomokuRule.SetStones(this->stones);
@@ -52,8 +52,8 @@ void Gomoku::StartGame()
     sf::Text myLabel;
     myLabel.setFont(this->font);
     myLabel.setPosition(textPosition);
-    myLabel.setString("GOMOKU V.1. Lastly Updated by Jihyo Kim in Feburary 2020.");
-    myLabel.setCharacterSize(24.f);
+    myLabel.setString("GOMOKU V.1. Lastly Updated by Jihyo Kim in Feburary 2020.\nSource code is available at this link https://github.com/kimjihyo/Gomoku.");
+    myLabel.setCharacterSize(48.f);
     myLabel.setColor(sf::Color::Black);
     myLabel.setStyle(sf::Text::Bold);
 
@@ -134,7 +134,7 @@ void Gomoku::StartGame()
                 this->window->close();
             }
         }
-        this->window->clear(BACKGROUND_COLOR);
+        this->window->clear(sf::Color::White);
         this->drawBoard();
         this->drawStonesPlaced();
         this->drawButton(resetButton);
