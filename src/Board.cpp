@@ -59,6 +59,7 @@ Board::Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR
         this->indexLabels[i]->setCharacterSize(textSize);
         this->indexLabels[i]->setFillColor(sf::Color::Black);
     }
+    this->boardArea = sf::FloatRect(boardPosition.x, boardPosition.y, boardSize - boardSpacing, boardSize - boardSpacing);
 }
 Board::~Board()
 {
@@ -122,4 +123,14 @@ const sf::Vector2f &Board::GetBoardPosition() const
 float Board::GetBoardSize() const
 {
     return this->boardSize;
+}
+
+float Board::GetBoardSpacing() const
+{
+    return this->boardSpacing;
+}
+
+const sf::FloatRect& Board::GetBoardArea() const
+{
+    return this->boardArea;
 }

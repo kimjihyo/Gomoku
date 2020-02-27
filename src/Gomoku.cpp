@@ -9,7 +9,8 @@
 Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     : BACKGROUND_COLOR(sf::Color(245, 240, 225)),
       counter(0),
-      shouldDisplayLabels(true)
+      shouldDisplayLabels(true),
+      shouldEnableIndicator(true)
 {
     this->window = new sf::RenderWindow(sf::VideoMode(windowSizeX, windowSizeY), "Gomoku", sf::Style::Close);
     this->window->setFramerateLimit(20);
@@ -17,6 +18,15 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     this->board = new Board(*window, font);
     this->initStones();
     this->gomokuRule.SetStones(this->stones);
+    const sf::Vector2i &tempPosition = sf::Mouse::getPosition(*this->window);
+    this->cachedMousePositionX = tempPosition.x;
+    this->cachedMousePositionY = tempPosition.y;
+    this->stoneSize = this->board->GetBoardSize() / 38.f;
+
+    this->indicator.setFillColor(sf::Color::Black);
+    this->indicator.setSize(sf::Vector2f(this->stoneSize * 1.2f, this->stoneSize * 1.2f));
+    this->indicator.setOutlineColor(sf::Color::Black);
+    this->indicator.setOutlineThickness(3.f);
 }
 
 Gomoku::~Gomoku()
@@ -96,15 +106,18 @@ void Gomoku::StartGame()
                     this->placeStone(sf::Mouse::getPosition(*this->window));
                     if (this->gomokuRule.GetIsGameEnded())
                     {
+                        std::cout << "Game has ended!" << std::endl;
                         for (int i = 0; i < fiveStones.size(); i++)
                         {
                             fiveStones.at(i)->Highlight();
                         }
+                        this->shouldEnableIndicator = false;
                     }
                 }
                 resetButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->gomokuRule.Reset();
                     this->resetStones();
+                    this->shouldEnableIndicator = true;
                 });
                 labelToggleButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
                     this->shouldDisplayLabels = !this->shouldDisplayLabels;
@@ -136,13 +149,17 @@ void Gomoku::StartGame()
         }
         this->window->clear(sf::Color::White);
         this->drawBoard();
-        this->drawStonesPlaced();
         this->drawButton(resetButton);
         this->drawButton(labelToggleButton);
         this->drawButton(undoButton);
         this->drawButton(gomokuButton);
         this->drawButton(renjuButton);
+        if (this->shouldEnableIndicator)
+        {
+            this->drawIndicator(sf::Mouse::getPosition(*this->window));
+        }
         this->window->draw(myLabel);
+        this->drawStonesPlaced();
         this->window->display();
     }
 }
@@ -192,21 +209,54 @@ void Gomoku::drawButton(const Button &button)
     this->window->draw(button.GetLabelShape());
 }
 
+void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
+{
+    if (!this->board->GetBoardArea().contains(sf::Vector2f(localPosition.x, localPosition.y)))
+    {
+        return;
+    }
+
+    float indicatorSize = this->indicator.getSize().x;
+    if (abs(cachedMousePositionX - localPosition.x) < this->stoneSize &&
+        abs(cachedMousePositionY - localPosition.y) < this->stoneSize)
+    {
+        this->window->draw(this->indicator);
+        return;
+    }
+    else
+    {
+        cachedMousePositionX = localPosition.x;
+        cachedMousePositionY = localPosition.y;
+    }
+
+    sf::Vector2i index = this->board->CalculateStoneIndexByPosition(localPosition);
+    sf::Vector2f positionOfIndicator = this->board->CalculateStonePositionToPlace(index, indicatorSize);
+    std::cout << "drawIndicator:: cacheMousePosition was upadted to " << index.x << " " << index.y << std::endl;
+    if (index.x > -1 && index.x < Board::NUM_LINES && index.y > -1 && index.y < Board::NUM_LINES)
+    {
+        this->indicator.setPosition(sf::Vector2f(positionOfIndicator.x + indicatorSize / 2, positionOfIndicator.y + indicatorSize / 2));
+        this->window->draw(this->indicator);
+    }
+}
+
 bool Gomoku::placeStone(const sf::Vector2i &localPosition)
 {
-    float stoneSize = this->board->GetBoardSize() / 38.f;
     sf::Vector2i stoneIndex = this->board->CalculateStoneIndexByPosition(localPosition);
-    sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, stoneSize);
+    sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, this->stoneSize);
 
     if (this->stones[stoneIndex.y][stoneIndex.x] == nullptr)
     {
         if (stoneIndex.y > -1 && stoneIndex.y < Board::NUM_LINES && stoneIndex.x > -1 && stoneIndex.x < Board::NUM_LINES)
         {
-            this->stones[stoneIndex.y][stoneIndex.x] = new Stone(stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
+            this->stones[stoneIndex.y][stoneIndex.x] = new Stone(this->stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
                                                                  ++counter, stoneIndex.x, stoneIndex.y);
             this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
             this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
-            if (!this->gomokuRule.MakeMove(stoneIndex.x, stoneIndex.y, counter % 2))
+            if (this->gomokuRule.MakeMove(stoneIndex.x, stoneIndex.y, counter % 2))
+            {
+                this->indicator.setFillColor(this->counter % 2 == 0 ? sf::Color::Black : sf::Color::White);
+            }
+            else
             {
                 this->undoLastStone();
             }

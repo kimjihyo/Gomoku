@@ -18,9 +18,16 @@ private:
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
     GomokuRule gomokuRule;
     std::vector<Stone*> stonesInOrder;
+    sf::RectangleShape indicator;
     
     int counter;
     bool shouldDisplayLabels;
+    bool shouldEnableIndicator;
+
+    int cachedMousePositionX;
+    int cachedMousePositionY;
+
+    float stoneSize;
 
 public:
     Gomoku(unsigned int windowSizeX, unsigned int windowSizeY);
@@ -35,4 +42,5 @@ private:
     void drawButton(const Button& button);
     void resetStones();
     void undoLastStone();
+    void drawIndicator(const sf::Vector2i& position);
 };

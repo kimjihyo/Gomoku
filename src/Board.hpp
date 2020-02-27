@@ -5,6 +5,7 @@
 class Board
 {
 private:
+    sf::FloatRect boardArea;
     sf::RectangleShape *boardShape;
     sf::RectangleShape **lines;
     sf::Text **indexLabels;
@@ -30,4 +31,6 @@ public:
     sf::Text **GetIndexLabels() const;
     const sf::Vector2f &GetBoardPosition() const;
     float GetBoardSize() const;
+    float GetBoardSpacing() const;
+    const sf::FloatRect& GetBoardArea() const;
 };
