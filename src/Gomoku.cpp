@@ -10,7 +10,8 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     : BACKGROUND_COLOR(sf::Color(245, 240, 225)),
       counter(0),
       shouldDisplayLabels(true),
-      shouldEnableIndicator(true)
+      shouldEnableIndicator(true),
+      isMouseInsideBoard(false)
 {
     this->window = new sf::RenderWindow(sf::VideoMode(windowSizeX, windowSizeY), "Gomoku", sf::Style::Close);
     this->window->setFramerateLimit(20);
@@ -114,7 +115,7 @@ void Gomoku::StartGame()
             {
                 if (!this->gomokuRule.GetIsGameEnded())
                 {
-                    this->placeStone(sf::Mouse::getPosition(*this->window));
+                    this->placeStone();
                     if (this->gomokuRule.GetIsGameEnded())
                     {
                         std::cout << "Game has ended!" << std::endl;
@@ -240,9 +241,11 @@ void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
 {
     if (!this->board->GetBoardArea().contains(sf::Vector2f(localPosition.x, localPosition.y)))
     {
+        this->isMouseInsideBoard = false;
         return;
     }
 
+    this->isMouseInsideBoard = true;
     float indicatorSize = this->indicator.getSize().x;
     if (abs(cachedMousePositionX - localPosition.x) < this->stoneSize &&
         abs(cachedMousePositionY - localPosition.y) < this->stoneSize)
@@ -265,8 +268,13 @@ void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
     }
 }
 
-bool Gomoku::placeStone(const sf::Vector2i &localPosition)
+bool Gomoku::placeStone()
 {
+    if (!isMouseInsideBoard)
+    {
+        return false;
+    }
+    const sf::Vector2i localPosition(cachedMousePositionX, cachedMousePositionY);
     sf::Vector2i stoneIndex = this->board->CalculateStoneIndexByPosition(localPosition);
     sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, this->stoneSize);
 

@@ -25,6 +25,7 @@ private:
     int counter;
     bool shouldDisplayLabels;
     bool shouldEnableIndicator;
+    bool isMouseInsideBoard;
 
     int cachedMousePositionX;
     int cachedMousePositionY;
@@ -38,7 +39,7 @@ public:
 
 private:
     void initStones();
-    bool placeStone(const sf::Vector2i& position);
+    bool placeStone();
     void drawBoard();
     void drawStonesPlaced();
     void drawButton(const Button& button);
