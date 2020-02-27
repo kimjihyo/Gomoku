@@ -21,25 +21,31 @@ bool GomokuReader::SetFilepath(const std::string &filepath)
 void GomokuReader::GetIntegerMatrix(int (*matrix)[Board::NUM_LINES])
 {
     std::ifstream stream(m_Filepath);
-    char ch;
+    int e;
 
     for (int y = 0; y < 15; y++)
     {
         for (int x = 0; x < 15; x++)
         {
-            stream >> std::noskipws >> ch;
-            if (ch == '\n')
-            {
-                stream >> std::noskipws >> ch;
-            }
-            if (ch != '\0')
-            {
-                matrix[y][x] = (int)ch - 48;
-            }
+            stream >> e;
+            matrix[y][x] = e;
         }
     }
 }
 
 void GomokuReader::GetStoneMatrix(Stone *(*matrix)[Board::NUM_LINES])
 {
+}
+
+void GomokuReader::WriteIntegerMatrixToTextFile(int (*matrix)[Board::NUM_LINES])
+{
+    std::ofstream stream(m_Filepath);
+    for (int y = 0; y < Board::NUM_LINES; y++)
+    {
+        for (int x = 0; x < Board::NUM_LINES; x++)
+        {
+            stream << matrix[y][x] << " ";
+        }
+        stream << "\n";
+    }
 }

@@ -14,4 +14,5 @@ public:
     bool SetFilepath(const std::string &filepath);
     void GetIntegerMatrix(int (*matrix)[Board::NUM_LINES]);
     void GetStoneMatrix(Stone *(*matrix)[Board::NUM_LINES]);
+    void WriteIntegerMatrixToTextFile(int (*matrix)[Board::NUM_LINES]);
 };

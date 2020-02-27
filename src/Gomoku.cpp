@@ -58,6 +58,7 @@ void Gomoku::StartGame()
     sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
     sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
     sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, renjuButtonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f exportButtonPosition(buttonPosition.x, readFromTextFileButtonPosition.y + buttonSize.y * 1.5f);
 
     sf::Vector2f textPosition(boardPosition.x, boardPosition.y + this->board->GetBoardSize() + 5.f);
 
@@ -94,9 +95,13 @@ void Gomoku::StartGame()
     renjuButton.MakeButtonToggle();
     renjuButton.Toggle();
 
-    Button readFromTextFileButton("READ FROM TEXT FILE", this->font);
-    // renjuButton.SetPosition(readFromTextFileButtonPosition);
-    // renjuButton.SetSize(buttonSize);
+    Button readFromTextFileButton("IMPORT", this->font);
+    readFromTextFileButton.SetSize(buttonSize);
+    readFromTextFileButton.SetPosition(readFromTextFileButtonPosition);
+
+    Button exportButton("EXPORT", this->font);
+    exportButton.SetSize(buttonSize);
+    exportButton.SetPosition(exportButtonPosition);
 
     const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
 
@@ -155,6 +160,12 @@ void Gomoku::StartGame()
                     this->resetStones();
                     this->placeStonesFromIntegerMatrix(matrix);
                 });
+                exportButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    std::cout << "export button clicked!" << std::endl;
+                    int matrix[15][15];
+                    this->exportCurrentKiboToIntegerMatrix(matrix);
+                    this->reader.WriteIntegerMatrixToTextFile(matrix);
+                });
             }
             if (event.type == sf::Event::Closed)
             {
@@ -169,6 +180,7 @@ void Gomoku::StartGame()
         this->drawButton(gomokuButton);
         this->drawButton(renjuButton);
         this->drawButton(readFromTextFileButton);
+        this->drawButton(exportButton);
         if (this->shouldEnableIndicator)
         {
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
@@ -320,9 +332,10 @@ void Gomoku::placeStonesFromIntegerMatrix(int (*matrix)[Board::NUM_LINES])
             {
                 sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(sf::Vector2i(x, y), this->stoneSize);
                 this->stones[y][x] = new Stone(this->stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
-                                               ++counter, x, y);
+                                               matrix[y][x], x, y);
                 this->stones[y][x]->EnableLabel(font);
                 this->stonesInOrder.push_back(this->stones[y][x]);
+                counter++;
             }
         }
     }
