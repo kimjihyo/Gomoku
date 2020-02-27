@@ -27,6 +27,7 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     this->indicator.setSize(sf::Vector2f(this->stoneSize * 1.2f, this->stoneSize * 1.2f));
     this->indicator.setOutlineColor(sf::Color::Black);
     this->indicator.setOutlineThickness(3.f);
+    this->reader.SetFilepath("./move.txt");
 }
 
 Gomoku::~Gomoku()
@@ -56,6 +57,7 @@ void Gomoku::StartGame()
     sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
     sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
     sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, renjuButtonPosition.y + buttonSize.y * 1.5f);
 
     sf::Vector2f textPosition(boardPosition.x, boardPosition.y + this->board->GetBoardSize() + 5.f);
 
@@ -91,6 +93,10 @@ void Gomoku::StartGame()
     renjuButton.SetSize(buttonSize);
     renjuButton.MakeButtonToggle();
     renjuButton.Toggle();
+
+    Button readFromTextFileButton("READ FROM TEXT FILE", this->font);
+    // renjuButton.SetPosition(readFromTextFileButtonPosition);
+    // renjuButton.SetSize(buttonSize);
 
     const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
 
@@ -141,6 +147,14 @@ void Gomoku::StartGame()
                         gomokuButton.Toggle();
                     }
                 });
+                readFromTextFileButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
+                    std::cout << "read from text file button clicked!" << std::endl;
+                    int matrix[15][15];
+                    this->reader.GetIntegerMatrix(matrix);
+                    this->gomokuRule.Reset();
+                    this->resetStones();
+                    this->placeStonesFromIntegerMatrix(matrix);
+                });
             }
             if (event.type == sf::Event::Closed)
             {
@@ -154,6 +168,7 @@ void Gomoku::StartGame()
         this->drawButton(undoButton);
         this->drawButton(gomokuButton);
         this->drawButton(renjuButton);
+        this->drawButton(readFromTextFileButton);
         if (this->shouldEnableIndicator)
         {
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
@@ -231,7 +246,6 @@ void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
 
     sf::Vector2i index = this->board->CalculateStoneIndexByPosition(localPosition);
     sf::Vector2f positionOfIndicator = this->board->CalculateStonePositionToPlace(index, indicatorSize);
-    std::cout << "drawIndicator:: cacheMousePosition was upadted to " << index.x << " " << index.y << std::endl;
     if (index.x > -1 && index.x < Board::NUM_LINES && index.y > -1 && index.y < Board::NUM_LINES)
     {
         this->indicator.setPosition(sf::Vector2f(positionOfIndicator.x + indicatorSize / 2, positionOfIndicator.y + indicatorSize / 2));
@@ -293,5 +307,41 @@ void Gomoku::undoLastStone()
         delete this->stones[y][x];
         this->stones[y][x] = nullptr;
         this->counter--;
+    }
+}
+
+void Gomoku::placeStonesFromIntegerMatrix(int (*matrix)[Board::NUM_LINES])
+{
+    for (int y = 0; y < Board::NUM_LINES; y++)
+    {
+        for (int x = 0; x < Board::NUM_LINES; x++)
+        {
+            if (matrix[y][x] != 0)
+            {
+                sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(sf::Vector2i(x, y), this->stoneSize);
+                this->stones[y][x] = new Stone(this->stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
+                                               ++counter, x, y);
+                this->stones[y][x]->EnableLabel(font);
+                this->stonesInOrder.push_back(this->stones[y][x]);
+            }
+        }
+    }
+}
+
+void Gomoku::exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) const
+{
+    for (int y = 0; y < Board::NUM_LINES; y++)
+    {
+        for (int x = 0; x < Board::NUM_LINES; x++)
+        {
+            if (stones[y][x] != nullptr)
+            {
+                matrix[y][x] = stones[y][x]->GetCount();
+            }
+            else
+            {
+                matrix[y][x] = 0;
+            }
+        }
     }
 }

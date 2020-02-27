@@ -6,6 +6,7 @@
 #include "Stone.hpp"
 #include "Button.hpp"
 #include "GomokuRule.hpp"
+#include "GomokuReader.hpp"
 
 class Gomoku
 {
@@ -17,6 +18,7 @@ private:
     Board *board;
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
     GomokuRule gomokuRule;
+    GomokuReader reader;
     std::vector<Stone*> stonesInOrder;
     sf::RectangleShape indicator;
     
@@ -43,4 +45,6 @@ private:
     void resetStones();
     void undoLastStone();
     void drawIndicator(const sf::Vector2i& position);
+    void placeStonesFromIntegerMatrix(int (*matrix)[Board::NUM_LINES]);
+    void exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) const;
 };
