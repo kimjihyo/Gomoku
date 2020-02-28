@@ -39,4 +39,5 @@ private:
     Move checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
     bool checkDoubleThree(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal);
     bool checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal);
+    bool checkIfStonePlacedAt(unsigned int pivotX, unsigned int pivotY);
 };

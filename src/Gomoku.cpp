@@ -25,7 +25,7 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
 
     this->indicator.setFillColor(sf::Color::Black);
     this->indicator.setSize(sf::Vector2f(this->stoneSize * 1.2f, this->stoneSize * 1.2f));
-    this->indicator.setOutlineColor(sf::Color::Black);
+    this->indicator.setOutlineColor(sf::Color::White);
     this->indicator.setOutlineThickness(3.f);
     this->reader.SetFilepath("./move.txt");
 }
@@ -81,7 +81,8 @@ void Gomoku::StartGame()
                 this->window->close();
             }
         }
-        this->window->clear(sf::Color::White);
+        // this->window->clear(sf::Color(85, 85, 85));
+        this->window->clear(sf::Color::Black);
         this->drawBoard();
 
         for (Button *buttonPtr : this->buttons)
@@ -94,7 +95,7 @@ void Gomoku::StartGame()
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
         }
         this->drawStonesPlaced();
-        
+
         this->window->display();
     }
 }

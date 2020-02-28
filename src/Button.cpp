@@ -8,10 +8,13 @@ Button::Button(sf::RenderWindow *window, const char *label, const sf::Font &font
     : m_IsToggleButton(false), m_Toggle(false), m_Window(window)
 {
     m_ShapeBuffer = new sf::RectangleShape(sf::Vector2f(400.f, 100.f));
-    m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
-
+    // m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
+    m_ShapeBuffer->setFillColor(sf::Color::Black);
+    m_ShapeBuffer->setOutlineColor(sf::Color::White);
+    m_ShapeBuffer->setOutlineThickness(4.f);
     m_LabelBuffer = new sf::Text();
     m_LabelBuffer->setFont(font);
+    m_LabelBuffer->setFillColor(sf::Color::White);
     m_LabelBuffer->setString(label);
     m_LabelBuffer->setStyle(sf::Text::Bold);
     this->setLabelPosition();

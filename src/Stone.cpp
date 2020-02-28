@@ -12,14 +12,15 @@ Stone::Stone(float _stoneSize, const sf::Vector2f &position, int count, unsigned
     if (count % 2 == 1)
     {
         shapeBuffer->setFillColor(sf::Color::Black);
+        shapeBuffer->setOutlineColor(sf::Color::White);
     }
     else
     {
         shapeBuffer->setFillColor(sf::Color::White);
+        shapeBuffer->setOutlineColor(sf::Color::Black);
     }
     shapeBuffer->setPosition(position);
     shapeBuffer->setOutlineThickness(stoneOutlineThickness);
-    shapeBuffer->setOutlineColor(sf::Color::Black);
 }
 Stone::~Stone()
 {

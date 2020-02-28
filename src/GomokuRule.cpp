@@ -77,6 +77,7 @@ bool GomokuRule::GetRuleType() const
     return m_RuleType;
 }
 
+
 Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
 {
     if (pivotX > -1 && pivotX < Board::NUM_LINES &&
@@ -364,7 +365,8 @@ bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, 
     {
         counter++;
     }
-    std::cout << std::endl << "checkDoubleThree::counter:: " << counter << std::endl;
+    std::cout << std::endl
+              << "checkDoubleThree::counter:: " << counter << std::endl;
     return counter > 1;
 }
 bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal)
@@ -387,4 +389,9 @@ bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, c
         counter++;
     }
     return counter > 1;
+}
+
+bool GomokuRule::checkIfStonePlacedAt(unsigned int x, unsigned int y)
+{
+    return x < Board::NUM_LINES && y < Board::NUM_LINES && m_Stones[y][x] == nullptr;
 }
