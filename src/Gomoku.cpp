@@ -55,18 +55,7 @@ Gomoku::~Gomoku()
 
 void Gomoku::StartGame()
 {
-    const sf::Vector2f &boardPosition = this->board->GetBoardPosition();
-    sf::Vector2f textPosition(boardPosition.x, boardPosition.y + this->board->GetBoardSize() + 5.f);
     this->initButtons();
-
-    sf::Text myLabel;
-    myLabel.setFont(this->font);
-    myLabel.setPosition(textPosition);
-    myLabel.setString("GOMOKU V.1. Lastly Updated by Jihyo Kim in Feburary 2020.\nSource code is available at this link https://github.com/kimjihyo/Gomoku.");
-    myLabel.setCharacterSize(48.f);
-    myLabel.setColor(sf::Color::Black);
-    myLabel.setStyle(sf::Text::Bold);
-
     while (this->window->isOpen())
     {
         sf::Event event;
@@ -104,9 +93,8 @@ void Gomoku::StartGame()
         {
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
         }
-
-        this->window->draw(myLabel);
         this->drawStonesPlaced();
+        
         this->window->display();
     }
 }
