@@ -94,24 +94,11 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
     {
         if (m_Stones[pivotY][i] == nullptr)
         {
-            if (canMoveForward)
-            {
-                canMoveForward = false;
-                continue;
-            }
-            else
-            {
-                break;
-            }
+            continue;
         }
-        if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
+        else if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
             break;
-        }
-        if (!canMoveForward)
-        {
-            isConnected = false;
         }
         counter++;
     }

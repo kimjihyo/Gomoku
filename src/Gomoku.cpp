@@ -10,8 +10,7 @@ Gomoku::Gomoku(unsigned int windowSizeX, unsigned int windowSizeY)
     : BACKGROUND_COLOR(sf::Color(245, 240, 225)),
       counter(0),
       shouldDisplayLabels(true),
-      shouldEnableIndicator(true),
-      isMouseInsideBoard(false)
+      shouldEnableIndicator(true)
 {
     this->window = new sf::RenderWindow(sf::VideoMode(windowSizeX, windowSizeY), "Gomoku", sf::Style::Close);
     this->window->setFramerateLimit(20);
@@ -44,6 +43,12 @@ Gomoku::~Gomoku()
             }
         }
     }
+
+    for (Button* button : this->buttons)
+    {
+        delete button;
+    }
+
     delete window;
     delete board;
 }
@@ -51,17 +56,8 @@ Gomoku::~Gomoku()
 void Gomoku::StartGame()
 {
     const sf::Vector2f &boardPosition = this->board->GetBoardPosition();
-    sf::Vector2f buttonSize(this->board->GetBoardSize() / 4.f, this->board->GetBoardSize() / 12.f);
-
-    sf::Vector2f buttonPosition(boardPosition.x + this->board->GetBoardSize() + buttonSize.y, boardPosition.y);
-    sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + buttonSize.y * 1.5f);
-    sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
-    sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
-    sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
-    sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, renjuButtonPosition.y + buttonSize.y * 1.5f);
-    sf::Vector2f exportButtonPosition(buttonPosition.x, readFromTextFileButtonPosition.y + buttonSize.y * 1.5f);
-
     sf::Vector2f textPosition(boardPosition.x, boardPosition.y + this->board->GetBoardSize() + 5.f);
+    this->initButtons();
 
     sf::Text myLabel;
     myLabel.setFont(this->font);
@@ -70,41 +66,6 @@ void Gomoku::StartGame()
     myLabel.setCharacterSize(48.f);
     myLabel.setColor(sf::Color::Black);
     myLabel.setStyle(sf::Text::Bold);
-
-    Button resetButton("RESET STONES", this->font);
-    resetButton.SetPosition(buttonPosition);
-    resetButton.SetSize(buttonSize);
-
-    Button labelToggleButton("TOGGLE LABELS", this->font);
-    labelToggleButton.SetPosition(buttonPosition2);
-    labelToggleButton.SetSize(buttonSize);
-    labelToggleButton.MakeButtonToggle();
-    labelToggleButton.Toggle();
-
-    Button undoButton("UNDO", this->font);
-    undoButton.SetPosition(buttonPosition3);
-    undoButton.SetSize(buttonSize);
-
-    Button gomokuButton("GOMOKU", this->font);
-    gomokuButton.SetPosition(gomokuButtonPosition);
-    gomokuButton.SetSize(buttonSize);
-    gomokuButton.MakeButtonToggle();
-
-    Button renjuButton("RENJU", this->font);
-    renjuButton.SetPosition(renjuButtonPosition);
-    renjuButton.SetSize(buttonSize);
-    renjuButton.MakeButtonToggle();
-    renjuButton.Toggle();
-
-    Button readFromTextFileButton("IMPORT", this->font);
-    readFromTextFileButton.SetSize(buttonSize);
-    readFromTextFileButton.SetPosition(readFromTextFileButtonPosition);
-
-    Button exportButton("EXPORT", this->font);
-    exportButton.SetSize(buttonSize);
-    exportButton.SetPosition(exportButtonPosition);
-
-    const std::vector<Stone *> &fiveStones = this->gomokuRule.GetFiveStonesInRow();
 
     while (this->window->isOpen())
     {
@@ -115,58 +76,16 @@ void Gomoku::StartGame()
             {
                 if (!this->gomokuRule.GetIsGameEnded())
                 {
-                    this->placeStone();
-                    if (this->gomokuRule.GetIsGameEnded())
+                    if (this->checkIfInsideBoard(sf::Mouse::getPosition(*this->window)))
                     {
-                        std::cout << "Game has ended!" << std::endl;
-                        for (int i = 0; i < fiveStones.size(); i++)
-                        {
-                            fiveStones.at(i)->Highlight();
-                        }
-                        this->shouldEnableIndicator = false;
+                        this->placeStone();
+                        this->shouldEnableIndicator = !this->gomokuRule.GetIsGameEnded();
                     }
                 }
-                resetButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    this->gomokuRule.Reset();
-                    this->resetStones();
-                    this->shouldEnableIndicator = true;
-                });
-                labelToggleButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    this->shouldDisplayLabels = !this->shouldDisplayLabels;
-                });
-                undoButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    this->undoLastStone();
-                });
-                gomokuButton.OnClick(sf::Mouse::getPosition(*this->window), [this, &renjuButton]() {
-                    if (this->gomokuRule.GetRuleType() != GOMOKU)
-                    {
-                        std::cout << "The game rule has been changed to GOMOKU" << std::endl;
-                        this->gomokuRule.SetRuleType(GOMOKU);
-                        renjuButton.Toggle();
-                    }
-                });
-                renjuButton.OnClick(sf::Mouse::getPosition(*this->window), [this, &gomokuButton]() {
-                    if (this->gomokuRule.GetRuleType() != RENJU)
-                    {
-                        std::cout << "The game rule has been changed to RENJU" << std::endl;
-                        this->gomokuRule.SetRuleType(RENJU);
-                        gomokuButton.Toggle();
-                    }
-                });
-                readFromTextFileButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    std::cout << "read from text file button clicked!" << std::endl;
-                    int matrix[15][15];
-                    this->reader.GetIntegerMatrix(matrix);
-                    this->gomokuRule.Reset();
-                    this->resetStones();
-                    this->placeStonesFromIntegerMatrix(matrix);
-                });
-                exportButton.OnClick(sf::Mouse::getPosition(*this->window), [this]() {
-                    std::cout << "export button clicked!" << std::endl;
-                    int matrix[15][15];
-                    this->exportCurrentKiboToIntegerMatrix(matrix);
-                    this->reader.WriteIntegerMatrixToTextFile(matrix);
-                });
+                for (Button *buttonPtr : this->buttons)
+                {
+                    buttonPtr->OnClick();
+                }
             }
             if (event.type == sf::Event::Closed)
             {
@@ -175,17 +94,17 @@ void Gomoku::StartGame()
         }
         this->window->clear(sf::Color::White);
         this->drawBoard();
-        this->drawButton(resetButton);
-        this->drawButton(labelToggleButton);
-        this->drawButton(undoButton);
-        this->drawButton(gomokuButton);
-        this->drawButton(renjuButton);
-        this->drawButton(readFromTextFileButton);
-        this->drawButton(exportButton);
-        if (this->shouldEnableIndicator)
+
+        for (Button *buttonPtr : this->buttons)
+        {
+            this->drawButton(*buttonPtr);
+        }
+
+        if (this->shouldEnableIndicator && this->checkIfInsideBoard(sf::Mouse::getPosition(*this->window)))
         {
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
         }
+
         this->window->draw(myLabel);
         this->drawStonesPlaced();
         this->window->display();
@@ -201,6 +120,101 @@ void Gomoku::initStones()
             this->stones[y][x] = nullptr;
         }
     }
+}
+
+void Gomoku::initButtons()
+{
+    const sf::Vector2f &boardPosition = this->board->GetBoardPosition();
+    sf::Vector2f buttonSize(this->board->GetBoardSize() / 4.f, this->board->GetBoardSize() / 12.f);
+
+    sf::Vector2f buttonPosition(boardPosition.x + this->board->GetBoardSize() + buttonSize.y, boardPosition.y);
+    sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
+    sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
+    sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, renjuButtonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f exportButtonPosition(buttonPosition.x, readFromTextFileButtonPosition.y + buttonSize.y * 1.5f);
+
+    Button *resetButton = new Button(this->window, "RESET STONES", this->font);
+    resetButton->SetPosition(buttonPosition);
+    resetButton->SetSize(buttonSize);
+    this->buttons.push_back(resetButton);
+
+    Button *labelToggleButton = new Button(this->window, "TOGGLE LABELS", this->font);
+    labelToggleButton->SetPosition(buttonPosition2);
+    labelToggleButton->SetSize(buttonSize);
+    this->buttons.push_back(labelToggleButton);
+
+    Button *undoButton = new Button(this->window, "UNDO", this->font);
+    undoButton->SetPosition(buttonPosition3);
+    undoButton->SetSize(buttonSize);
+    this->buttons.push_back(undoButton);
+
+    Button *gomokuButton = new Button(this->window, "GOMOKU", this->font);
+    gomokuButton->SetPosition(gomokuButtonPosition);
+    gomokuButton->SetSize(buttonSize);
+    this->buttons.push_back(gomokuButton);
+
+    Button *renjuButton = new Button(this->window, "RENJU", this->font);
+    renjuButton->SetPosition(renjuButtonPosition);
+    renjuButton->SetSize(buttonSize);
+    this->buttons.push_back(renjuButton);
+
+    Button *readFromTextFileButton = new Button(this->window, "IMPORT", this->font);
+    readFromTextFileButton->SetSize(buttonSize);
+    readFromTextFileButton->SetPosition(readFromTextFileButtonPosition);
+    this->buttons.push_back(readFromTextFileButton);
+
+    Button *exportButton = new Button(this->window, "EXPORT", this->font);
+    exportButton->SetSize(buttonSize);
+    exportButton->SetPosition(exportButtonPosition);
+    this->buttons.push_back(exportButton);
+
+    resetButton->SetOnClick([this]() {
+        this->gomokuRule.Reset();
+        this->resetStones();
+        this->shouldEnableIndicator = true;
+    });
+
+    labelToggleButton->SetOnClick([this]() {
+        this->shouldDisplayLabels = !this->shouldDisplayLabels;
+    });
+
+    undoButton->SetOnClick([this]() {
+        this->undoLastStone();
+    });
+
+    gomokuButton->SetOnClick([this]() {
+        if (this->gomokuRule.GetRuleType() != GOMOKU)
+        {
+            std::cout << "The game rule has been changed to GOMOKU" << std::endl;
+            this->gomokuRule.SetRuleType(GOMOKU);
+        }
+    });
+
+    renjuButton->SetOnClick([this]() {
+        if (this->gomokuRule.GetRuleType() != RENJU)
+        {
+            std::cout << "The game rule has been changed to RENJU" << std::endl;
+            this->gomokuRule.SetRuleType(RENJU);
+        }
+    });
+
+    readFromTextFileButton->SetOnClick([this]() {
+        std::cout << "read from text file button clicked!" << std::endl;
+        int matrix[15][15];
+        this->reader.GetIntegerMatrix(matrix);
+        this->gomokuRule.Reset();
+        this->resetStones();
+        this->placeStonesFromIntegerMatrix(matrix);
+    });
+
+    exportButton->SetOnClick([this]() {
+        std::cout << "export button clicked!" << std::endl;
+        int matrix[15][15];
+        this->exportCurrentKiboToIntegerMatrix(matrix);
+        this->reader.WriteIntegerMatrixToTextFile(matrix);
+    });
 }
 
 void Gomoku::drawBoard()
@@ -239,13 +253,6 @@ void Gomoku::drawButton(const Button &button)
 
 void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
 {
-    if (!this->board->GetBoardArea().contains(sf::Vector2f(localPosition.x, localPosition.y)))
-    {
-        this->isMouseInsideBoard = false;
-        return;
-    }
-
-    this->isMouseInsideBoard = true;
     float indicatorSize = this->indicator.getSize().x;
     if (abs(cachedMousePositionX - localPosition.x) < this->stoneSize &&
         abs(cachedMousePositionY - localPosition.y) < this->stoneSize)
@@ -270,10 +277,6 @@ void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
 
 bool Gomoku::placeStone()
 {
-    if (!isMouseInsideBoard)
-    {
-        return false;
-    }
     const sf::Vector2i localPosition(cachedMousePositionX, cachedMousePositionY);
     sf::Vector2i stoneIndex = this->board->CalculateStoneIndexByPosition(localPosition);
     sf::Vector2f positionToPlace = this->board->CalculateStonePositionToPlace(stoneIndex, this->stoneSize);
@@ -365,4 +368,9 @@ void Gomoku::exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) c
             }
         }
     }
+}
+
+bool Gomoku::checkIfInsideBoard(const sf::Vector2i &position) const
+{
+    return this->board->GetBoardArea().contains(sf::Vector2f(position.x, position.y));
 }

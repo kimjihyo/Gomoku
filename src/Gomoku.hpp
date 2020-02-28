@@ -17,6 +17,7 @@ private:
 
     Board *board;
     Stone *stones[Board::NUM_LINES][Board::NUM_LINES];
+    std::vector<Button*> buttons;
     GomokuRule gomokuRule;
     GomokuReader reader;
     std::vector<Stone*> stonesInOrder;
@@ -25,8 +26,6 @@ private:
     int counter;
     bool shouldDisplayLabels;
     bool shouldEnableIndicator;
-    bool isMouseInsideBoard;
-
     int cachedMousePositionX;
     int cachedMousePositionY;
 
@@ -39,6 +38,7 @@ public:
 
 private:
     void initStones();
+    void initButtons();
     bool placeStone();
     void drawBoard();
     void drawStonesPlaced();
@@ -48,4 +48,5 @@ private:
     void drawIndicator(const sf::Vector2i& position);
     void placeStonesFromIntegerMatrix(int (*matrix)[Board::NUM_LINES]);
     void exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) const;
+    bool checkIfInsideBoard(const sf::Vector2i& position) const;
 };

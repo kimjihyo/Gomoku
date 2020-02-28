@@ -4,7 +4,8 @@
 #include <iostream>
 #include <functional>
 
-Button::Button(const char *label, const sf::Font &font) : m_IsToggleButton(false), m_Toggle(false)
+Button::Button(sf::RenderWindow *window, const char *label, const sf::Font &font)
+    : m_IsToggleButton(false), m_Toggle(false), m_Window(window)
 {
     m_ShapeBuffer = new sf::RectangleShape(sf::Vector2f(400.f, 100.f));
     m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
@@ -59,16 +60,18 @@ void Button::MakeButtonToggle()
     m_IsToggleButton = true;
 }
 
-void Button::OnClick(const sf::Vector2i &mousePosition, const std::function<void(void)> &callback)
+void Button::OnClick()
 {
-    if (mousePosition.x >= m_ShapeBuffer->getPosition().x &&
-        mousePosition.x <= m_ShapeBuffer->getPosition().x + m_ShapeBuffer->getSize().x &&
-        mousePosition.y >= m_ShapeBuffer->getPosition().y &&
-        mousePosition.y <= m_ShapeBuffer->getPosition().y + m_ShapeBuffer->getSize().y)
+    if (this->checkIfMouseOnButton())
     {
         this->Toggle();
-        callback();
+        m_Callback();
     }
+}
+
+void Button::SetOnClick(const std::function<void(void)> &callback)
+{
+    m_Callback = std::move(callback);
 }
 
 void Button::Toggle()
@@ -90,4 +93,13 @@ void Button::setLabelPosition()
                              boundingBox.top + boundingBox.height / 2.0f);
     m_LabelBuffer->setPosition(m_ShapeBuffer->getPosition().x + m_ShapeBuffer->getSize().x / 2,
                                m_ShapeBuffer->getPosition().y + m_ShapeBuffer->getSize().y / 2);
+}
+
+bool Button::checkIfMouseOnButton()
+{
+    const sf::Vector2i &mousePosition = sf::Mouse::getPosition(*m_Window);
+    return (mousePosition.x >= m_ShapeBuffer->getPosition().x &&
+            mousePosition.x <= m_ShapeBuffer->getPosition().x + m_ShapeBuffer->getSize().x &&
+            mousePosition.y >= m_ShapeBuffer->getPosition().y &&
+            mousePosition.y <= m_ShapeBuffer->getPosition().y + m_ShapeBuffer->getSize().y);
 }
