@@ -77,7 +77,6 @@ bool GomokuRule::GetRuleType() const
     return m_RuleType;
 }
 
-
 Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
 {
     if (pivotX > -1 && pivotX < Board::NUM_LINES &&
@@ -95,10 +94,12 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
     {
         if (m_Stones[pivotY][i] == nullptr)
         {
+            canMoveForward = false;
             continue;
         }
         else if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         counter++;
@@ -120,7 +121,7 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
         }
         if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -129,6 +130,7 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
         }
         counter++;
     }
+
     std::cout << "checkHorizontal:: " << counter << std::endl;
     std::cout << "checkHorizontal::isOpen:: " << isOpen << std::endl;
     std::cout << "checkHorizontal::isConnected:: " << isConnected << std::endl;
@@ -164,7 +166,7 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         if (m_Stones[i][pivotX]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -190,7 +192,7 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         if (m_Stones[i][pivotX]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -234,7 +236,7 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -260,7 +262,7 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -304,7 +306,7 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
@@ -330,7 +332,7 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         if (m_Stones[y][x]->GetCount() % 2 != stoneType)
         {
-            isOpen = !canMoveForward && counter < 2;
+            isOpen = isConnected && !canMoveForward;
             break;
         }
         if (!canMoveForward)
