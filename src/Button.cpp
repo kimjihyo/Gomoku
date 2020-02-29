@@ -9,7 +9,6 @@ Button::Button(sf::RenderWindow *window, const char *label, const sf::Font &font
 {
     m_ShapeBuffer = new sf::RectangleShape(sf::Vector2f(400.f, 100.f));
     m_ShapeBuffer->setFillColor(sf::Color(85, 85, 85));
-    // m_ShapeBuffer->setFillColor(sf::Color::Black);
     m_ShapeBuffer->setOutlineColor(sf::Color::Black);
     m_ShapeBuffer->setOutlineThickness(4.f);
     m_LabelBuffer = new sf::Text();

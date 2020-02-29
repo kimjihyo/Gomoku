@@ -21,7 +21,7 @@ private:
     GomokuRule gomokuRule;
     GomokuReader reader;
     std::vector<Stone*> stonesInOrder;
-    std::vector<sf::RectangleShape*> forbiddenSpots;
+    std::vector<sf::CircleShape*> forbiddenSpots;
     sf::RectangleShape indicator;
     
     int counter;

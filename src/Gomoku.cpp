@@ -97,7 +97,7 @@ void Gomoku::StartGame()
 
         if (this->counter % 2 == 0)
         {
-            for (sf::RectangleShape *forbiddenSpot : this->forbiddenSpots)
+            for (sf::CircleShape *forbiddenSpot : this->forbiddenSpots)
             {
                 this->window->draw(*forbiddenSpot);
             }
@@ -127,9 +127,7 @@ void Gomoku::initButtons()
     sf::Vector2f buttonPosition(boardPosition.x + this->board->GetBoardSize() + buttonSize.y, boardPosition.y);
     sf::Vector2f buttonPosition2(buttonPosition.x, buttonPosition.y + buttonSize.y * 1.5f);
     sf::Vector2f buttonPosition3(buttonPosition.x, buttonPosition2.y + buttonSize.y * 1.5f);
-    sf::Vector2f gomokuButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
-    sf::Vector2f renjuButtonPosition(buttonPosition.x, gomokuButtonPosition.y + buttonSize.y * 1.5f);
-    sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, renjuButtonPosition.y + buttonSize.y * 1.5f);
+    sf::Vector2f readFromTextFileButtonPosition(buttonPosition.x, buttonPosition3.y + buttonSize.y * 1.5f);
     sf::Vector2f exportButtonPosition(buttonPosition.x, readFromTextFileButtonPosition.y + buttonSize.y * 1.5f);
 
     Button *resetButton = new Button(this->window, "RESET STONES", this->font);
@@ -147,15 +145,6 @@ void Gomoku::initButtons()
     undoButton->SetSize(buttonSize);
     this->buttons.push_back(undoButton);
 
-    Button *gomokuButton = new Button(this->window, "GOMOKU", this->font);
-    gomokuButton->SetPosition(gomokuButtonPosition);
-    gomokuButton->SetSize(buttonSize);
-    this->buttons.push_back(gomokuButton);
-
-    Button *renjuButton = new Button(this->window, "RENJU", this->font);
-    renjuButton->SetPosition(renjuButtonPosition);
-    renjuButton->SetSize(buttonSize);
-    this->buttons.push_back(renjuButton);
 
     Button *readFromTextFileButton = new Button(this->window, "IMPORT", this->font);
     readFromTextFileButton->SetSize(buttonSize);
@@ -179,22 +168,6 @@ void Gomoku::initButtons()
 
     undoButton->SetOnClick([this]() {
         this->undoLastStone();
-    });
-
-    gomokuButton->SetOnClick([this]() {
-        if (this->gomokuRule.GetRuleType() != GOMOKU)
-        {
-            std::cout << "The game rule has been changed to GOMOKU" << std::endl;
-            this->gomokuRule.SetRuleType(GOMOKU);
-        }
-    });
-
-    renjuButton->SetOnClick([this]() {
-        if (this->gomokuRule.GetRuleType() != RENJU)
-        {
-            std::cout << "The game rule has been changed to RENJU" << std::endl;
-            this->gomokuRule.SetRuleType(RENJU);
-        }
     });
 
     readFromTextFileButton->SetOnClick([this]() {
@@ -393,10 +366,9 @@ void Gomoku::drawMarkerAtForbiddenSpots()
                 if (!result)
                 {
                     std::cout << "drawMarkerAtForbiddenSpots:: x: " << x + 1 << " y: " << (char)(65 + y) << std::endl;
-                    sf::RectangleShape *forbiddenSpot = new sf::RectangleShape(this->indicator.getSize());
-                    sf::Vector2f positionOfSpot = this->board->CalculateStonePositionToPlace(sf::Vector2i(x, y), this->indicator.getSize().x);
-                    float spotSize = this->indicator.getSize().x;
-                    forbiddenSpot->setPosition(sf::Vector2f(positionOfSpot.x + spotSize / 2, positionOfSpot.y + spotSize / 2));
+                    float markerSize = this->stoneSize / 3.f;
+                    sf::CircleShape *forbiddenSpot = new sf::CircleShape(markerSize);
+                    forbiddenSpot->setPosition(this->board->CalculateStonePositionToPlace(sf::Vector2i(x, y), markerSize));
                     forbiddenSpots.push_back(forbiddenSpot);
                     forbiddenSpot->setFillColor(sf::Color::Red);
                     forbiddenSpot->setOutlineColor(sf::Color::Black);
@@ -409,7 +381,7 @@ void Gomoku::drawMarkerAtForbiddenSpots()
 
 void Gomoku::resetMarkersAtForbiddenSpots()
 {
-    for (sf::RectangleShape *forbiddenSpot : this->forbiddenSpots)
+    for (sf::CircleShape *forbiddenSpot : this->forbiddenSpots)
     {
         delete forbiddenSpot;
     }
