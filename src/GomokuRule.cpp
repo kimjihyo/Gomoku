@@ -341,19 +341,19 @@ bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, 
 bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
 {
     int counter = 0;
-    if (horizontal.counter == 4 && horizontal.isOpen)
+    if (horizontal.counter == 4)
     {
         counter++;
     }
-    if (vertical.counter == 4 && vertical.isOpen)
+    if (vertical.counter == 4)
     {
         counter++;
     }
-    if (leftDiagonal.counter == 4 && leftDiagonal.isOpen)
+    if (leftDiagonal.counter == 4)
     {
         counter++;
     }
-    if (rightDiagonal.counter == 4 && rightDiagonal.isOpen)
+    if (rightDiagonal.counter == 4)
     {
         counter++;
     }
