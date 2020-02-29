@@ -134,10 +134,6 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
         }
         counter++;
     }
-
-    std::cout << "checkHorizontal:: " << counter << std::endl;
-    std::cout << "checkHorizontal::isOpen:: " << isOpen << std::endl;
-    std::cout << "checkHorizontal::isConnected:: " << isConnected << std::endl;
     return {counter, isOpen, isConnected};
 }
 
@@ -198,10 +194,6 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         counter++;
     }
-    std::cout << "checkVertical:: " << counter << std::endl;
-    std::cout << "checkVertical::isOpen:: " << isOpen << std::endl;
-    std::cout << "checkHorizontal::isConnected:: " << isConnected << std::endl;
-
     return {counter, isOpen, isConnected};
 }
 
@@ -262,10 +254,6 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         counter++;
     }
-    std::cout << "checkLeftDiagonal:: " << counter << std::endl;
-    std::cout << "checkLeftDiagonal::isOpen:: " << isOpen << std::endl;
-    std::cout << "checkHorizontal::isConnected:: " << isConnected << std::endl;
-
     return {counter, isOpen, isConnected};
 }
 
@@ -326,10 +314,6 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         counter++;
     }
-    std::cout << "checkRightDiagonal:: " << counter << std::endl;
-    std::cout << "checkRightDiagonal::isOpen:: " << isOpen << std::endl;
-    std::cout << "checkHorizontal::isConnected:: " << isConnected << std::endl;
-
     return {counter, isOpen, isConnected};
 }
 
@@ -352,8 +336,6 @@ bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, 
     {
         counter++;
     }
-    std::cout << std::endl
-              << "checkDoubleThree::counter:: " << counter << std::endl;
     return counter > 1;
 }
 bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
