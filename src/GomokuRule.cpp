@@ -362,10 +362,10 @@ bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, c
 
 bool GomokuRule::checkSixInARow(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
 {
-    return (horizontal.counter == 6 && horizontal.isConnected) ||
-           (vertical.counter == 6 && vertical.isConnected) ||
-           (leftDiagonal.counter == 6 && leftDiagonal.isConnected) ||
-           (rightDiagonal.counter == 6 && rightDiagonal.isConnected);
+    return (horizontal.counter > 5 && horizontal.isConnected) ||
+           (vertical.counter > 5 && vertical.isConnected) ||
+           (leftDiagonal.counter > 5 && leftDiagonal.isConnected) ||
+           (rightDiagonal.counter > 5 && rightDiagonal.isConnected);
 }
 
 bool GomokuRule::checkIfStonePlacedAt(unsigned int x, unsigned int y)
