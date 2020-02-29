@@ -44,7 +44,7 @@ Gomoku::~Gomoku()
         }
     }
 
-    for (Button* button : this->buttons)
+    for (Button *button : this->buttons)
     {
         delete button;
     }
@@ -82,7 +82,7 @@ void Gomoku::StartGame()
             }
         }
         // this->window->clear(sf::Color(85, 85, 85));
-        this->window->clear(sf::Color::Black);
+        this->window->clear(sf::Color::White);
         this->drawBoard();
 
         for (Button *buttonPtr : this->buttons)
@@ -93,6 +93,14 @@ void Gomoku::StartGame()
         if (this->shouldEnableIndicator && this->checkIfInsideBoard(sf::Mouse::getPosition(*this->window)))
         {
             this->drawIndicator(sf::Mouse::getPosition(*this->window));
+        }
+
+        if (this->counter % 2 == 0)
+        {
+            for (sf::RectangleShape *forbiddenSpot : this->forbiddenSpots)
+            {
+                this->window->draw(*forbiddenSpot);
+            }
         }
         this->drawStonesPlaced();
 
@@ -242,6 +250,8 @@ void Gomoku::drawButton(const Button &button)
 
 void Gomoku::drawIndicator(const sf::Vector2i &localPosition)
 {
+    this->indicator.setFillColor(this->counter % 2 == 0 ? sf::Color::Black : sf::Color::White);
+    this->indicator.setOutlineColor(this->counter % 2 == 0 ? sf::Color::White : sf::Color::Black);
     float indicatorSize = this->indicator.getSize().x;
     if (abs(cachedMousePositionX - localPosition.x) < this->stoneSize &&
         abs(cachedMousePositionY - localPosition.y) < this->stoneSize)
@@ -274,17 +284,20 @@ bool Gomoku::placeStone()
     {
         if (stoneIndex.y > -1 && stoneIndex.y < Board::NUM_LINES && stoneIndex.x > -1 && stoneIndex.x < Board::NUM_LINES)
         {
-            this->stones[stoneIndex.y][stoneIndex.x] = new Stone(this->stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
-                                                                 ++counter, stoneIndex.x, stoneIndex.y);
-            this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
-            this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
-            if (this->gomokuRule.MakeMove(stoneIndex.x, stoneIndex.y, counter % 2))
+            if (this->gomokuRule.MakeMove(stoneIndex.x, stoneIndex.y, (counter + 1) % 2))
             {
-                this->indicator.setFillColor(this->counter % 2 == 0 ? sf::Color::Black : sf::Color::White);
+                this->stones[stoneIndex.y][stoneIndex.x] = new Stone(this->stoneSize, sf::Vector2f(positionToPlace.x, positionToPlace.y),
+                                                                     ++counter, stoneIndex.x, stoneIndex.y);
+                this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
+                this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
+                if (counter % 2 == 0)
+                {
+                    this->drawMarkerAtForbiddenSpots();
+                }
             }
             else
             {
-                this->undoLastStone();
+                return false;
             }
             return true;
         }
@@ -294,6 +307,7 @@ bool Gomoku::placeStone()
 
 void Gomoku::resetStones()
 {
+    this->resetMarkersAtForbiddenSpots();
     for (int y = 0; y < Board::NUM_LINES; y++)
     {
         for (int x = 0; x < Board::NUM_LINES; x++)
@@ -312,6 +326,7 @@ void Gomoku::undoLastStone()
 {
     if (!stonesInOrder.empty())
     {
+        this->resetMarkersAtForbiddenSpots();
         Stone *prevStone = stonesInOrder.back();
         stonesInOrder.pop_back();
         unsigned int x = prevStone->getXIndex();
@@ -362,4 +377,41 @@ void Gomoku::exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) c
 bool Gomoku::checkIfInsideBoard(const sf::Vector2i &position) const
 {
     return this->board->GetBoardArea().contains(sf::Vector2f(position.x, position.y));
+}
+
+void Gomoku::drawMarkerAtForbiddenSpots()
+{
+    this->resetMarkersAtForbiddenSpots();
+    for (int y = 0; y < Board::NUM_LINES; y++)
+    {
+        for (int x = 0; x < Board::NUM_LINES; x++)
+        {
+            if (this->stones[y][x] == nullptr)
+            {
+                bool result = this->gomokuRule.MakeMove(x, y, (counter + 1) % 2);
+
+                if (!result)
+                {
+                    std::cout << "drawMarkerAtForbiddenSpots:: x: " << x + 1 << " y: " << (char)(65 + y) << std::endl;
+                    sf::RectangleShape *forbiddenSpot = new sf::RectangleShape(this->indicator.getSize());
+                    sf::Vector2f positionOfSpot = this->board->CalculateStonePositionToPlace(sf::Vector2i(x, y), this->indicator.getSize().x);
+                    float spotSize = this->indicator.getSize().x;
+                    forbiddenSpot->setPosition(sf::Vector2f(positionOfSpot.x + spotSize / 2, positionOfSpot.y + spotSize / 2));
+                    forbiddenSpots.push_back(forbiddenSpot);
+                    forbiddenSpot->setFillColor(sf::Color::Red);
+                    forbiddenSpot->setOutlineColor(sf::Color::Black);
+                    forbiddenSpot->setOutlineThickness(4.f);
+                }
+            }
+        }
+    }
+}
+
+void Gomoku::resetMarkersAtForbiddenSpots()
+{
+    for (sf::RectangleShape *forbiddenSpot : this->forbiddenSpots)
+    {
+        delete forbiddenSpot;
+    }
+    forbiddenSpots.clear();
 }

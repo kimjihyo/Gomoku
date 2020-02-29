@@ -14,10 +14,10 @@ Board::Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR
     unsigned int xOffset = windowSize.x / 10;
     this->boardPosition = sf::Vector2f(windowSize.x / 2 - boardSize / 2 - xOffset, windowSize.y / 2 - boardSize / 2);
     this->boardShape = new sf::RectangleShape(sf::Vector2f(boardSize, boardSize));
-    // this->boardShape->setFillColor(BOARD_COLOR);
-    this->boardShape->setFillColor(sf::Color::Black);
+    this->boardShape->setFillColor(BOARD_COLOR);
+    // this->boardShape->setFillColor(sf::Color::Black);
     this->boardShape->setOutlineThickness(boardOutlineThickness);
-    this->boardShape->setOutlineColor(sf::Color::White);
+    this->boardShape->setOutlineColor(sf::Color::Black);
     this->boardShape->setPosition(boardPosition);
     this->lines = new sf::RectangleShape *[NUM_LINES * 2];
     this->indexLabels = new sf::Text *[NUM_LINES * 2];
@@ -54,11 +54,11 @@ Board::Board(const sf::RenderWindow &window, const sf::Font &font) : BOARD_COLOR
         this->indexLabels[i]->setOrigin(boundingBox.left + boundingBox.width / 2.0f,
                                         boundingBox.top + boundingBox.height / 2.0f);
 
-        this->lines[i]->setFillColor(sf::Color::White);
+        this->lines[i]->setFillColor(sf::Color::Black);
         this->indexLabels[i]->setFont(font);
         this->indexLabels[i]->setStyle(sf::Text::Bold);
         this->indexLabels[i]->setCharacterSize(textSize);
-        this->indexLabels[i]->setFillColor(sf::Color::White);
+        this->indexLabels[i]->setFillColor(sf::Color::Black);
     }
     this->boardArea = sf::FloatRect(boardPosition.x, boardPosition.y, boardSize - boardSpacing, boardSize - boardSpacing);
 }

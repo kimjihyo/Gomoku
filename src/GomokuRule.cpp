@@ -33,7 +33,6 @@ void GomokuRule::SetRuleType(RuleType ruleType)
 
 bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
 {
-    std::cout << std::endl;
     Move horizontalMove = this->checkHorizontal(pivotX, pivotY, stoneType);
     Move verticalMove = this->checkVertical(pivotX, pivotY, stoneType);
     Move leftDiagonalMove = this->checkLeftDiagonal(pivotX, pivotY, stoneType);
@@ -53,7 +52,8 @@ bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int
         else
         {
             return !checkDoubleThree(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove) &&
-                   !checkDoubleFour(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove);
+                   !checkDoubleFour(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove) &&
+                   !checkSixInARow(horizontalMove, verticalMove, leftDiagonalMove, rightDiagonalMove);
         }
     }
     else
@@ -77,35 +77,39 @@ bool GomokuRule::GetRuleType() const
     return m_RuleType;
 }
 
-Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
+Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const
 {
-    if (pivotX > -1 && pivotX < Board::NUM_LINES &&
-        pivotY > -1 && pivotY < Board::NUM_LINES &&
-        m_Stones[pivotY][pivotX] == nullptr)
-    {
-        return {0, false, true};
-    }
-
-    int counter = -1;
+    int counter = 1;
     bool isOpen = true;
     bool canMoveForward = true;
     bool isConnected = true;
-    for (int i = pivotX; i > -1; i--)
+    for (int i = pivotX - 1; i > -1; i--)
     {
         if (m_Stones[pivotY][i] == nullptr)
         {
-            canMoveForward = false;
-            continue;
+            if (canMoveForward)
+            {
+                canMoveForward = false;
+                continue;
+            }
+            else
+            {
+                break;
+            }
         }
         else if (m_Stones[pivotY][i]->GetCount() % 2 != stoneType)
         {
             isOpen = isConnected && !canMoveForward;
             break;
         }
+        if (!canMoveForward)
+        {
+            isConnected = false;
+        }
         counter++;
     }
-    canMoveForward = true;
-    for (int i = pivotX; i < Board::NUM_LINES; i++)
+    canMoveForward = isConnected;
+    for (int i = pivotX + 1; i < Board::NUM_LINES; i++)
     {
         if (m_Stones[pivotY][i] == nullptr)
         {
@@ -137,20 +141,13 @@ Move GomokuRule::checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsig
     return {counter, isOpen, isConnected};
 }
 
-Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
+Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const
 {
-    if (pivotX > -1 && pivotX < Board::NUM_LINES &&
-        pivotY > -1 && pivotY < Board::NUM_LINES &&
-        m_Stones[pivotY][pivotX] == nullptr)
-    {
-        return {0, false, true};
-    }
-
-    int counter = -1;
+    int counter = 1;
     bool isOpen = true;
     bool canMoveForward = true;
     bool isConnected = true;
-    for (int i = pivotY; i > -1; i--)
+    for (int i = pivotY - 1; i > -1; i--)
     {
         if (m_Stones[i][pivotX] == nullptr)
         {
@@ -175,8 +172,8 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
         }
         counter++;
     }
-    canMoveForward = true;
-    for (int i = pivotY; i < Board::NUM_LINES; i++)
+    canMoveForward = isConnected;
+    for (int i = pivotY + 1; i < Board::NUM_LINES; i++)
     {
         if (m_Stones[i][pivotX] == nullptr)
         {
@@ -208,19 +205,13 @@ Move GomokuRule::checkVertical(unsigned int pivotX, unsigned int pivotY, unsigne
     return {counter, isOpen, isConnected};
 }
 
-Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
+Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const
 {
-    if (pivotX > -1 && pivotX < Board::NUM_LINES &&
-        pivotY > -1 && pivotY < Board::NUM_LINES &&
-        m_Stones[pivotY][pivotX] == nullptr)
-    {
-        return {0, false, true};
-    }
-    int counter = -1;
+    int counter = 1;
     bool isOpen = true;
     bool canMoveForward = true;
     bool isConnected = true;
-    for (int x = pivotX, y = pivotY; x > -1 && y > -1; x--, y--)
+    for (int x = pivotX - 1, y = pivotY - 1; x > -1 && y > -1; x--, y--)
     {
         if (m_Stones[y][x] == nullptr)
         {
@@ -245,8 +236,8 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
         }
         counter++;
     }
-    canMoveForward = true;
-    for (int x = pivotX, y = pivotY; x < Board::NUM_LINES && y < Board::NUM_LINES; x++, y++)
+    canMoveForward = isConnected;
+    for (int x = pivotX + 1, y = pivotY + 1; x < Board::NUM_LINES && y < Board::NUM_LINES; x++, y++)
     {
         if (m_Stones[y][x] == nullptr)
         {
@@ -278,19 +269,13 @@ Move GomokuRule::checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, uns
     return {counter, isOpen, isConnected};
 }
 
-Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
+Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const
 {
-    if (pivotX > -1 && pivotX < Board::NUM_LINES &&
-        pivotY > -1 && pivotY < Board::NUM_LINES &&
-        m_Stones[pivotY][pivotX] == nullptr)
-    {
-        return {0, false, true};
-    }
-    int counter = -1;
+    int counter = 1;
     bool isOpen = true;
     bool canMoveForward = true;
     bool isConnected = true;
-    for (int x = pivotX, y = pivotY; x < Board::NUM_LINES && y > -1; x++, y--)
+    for (int x = pivotX + 1, y = pivotY - 1; x < Board::NUM_LINES && y > -1; x++, y--)
     {
         if (m_Stones[y][x] == nullptr)
         {
@@ -315,8 +300,8 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
         }
         counter++;
     }
-    canMoveForward = true;
-    for (int x = pivotX, y = pivotY; x > -1 && y < Board::NUM_LINES; x--, y++)
+    canMoveForward = isConnected;
+    for (int x = pivotX - 1, y = pivotY + 1; x > -1 && y < Board::NUM_LINES; x--, y++)
     {
         if (m_Stones[y][x] == nullptr)
         {
@@ -348,7 +333,7 @@ Move GomokuRule::checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, un
     return {counter, isOpen, isConnected};
 }
 
-bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal)
+bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
 {
     int counter = 0;
     if (horizontal.counter == 3 && horizontal.isOpen)
@@ -371,7 +356,7 @@ bool GomokuRule::checkDoubleThree(const Move &horizontal, const Move &vertical, 
               << "checkDoubleThree::counter:: " << counter << std::endl;
     return counter > 1;
 }
-bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal)
+bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
 {
     int counter = 0;
     if (horizontal.counter == 4 && horizontal.isOpen)
@@ -391,6 +376,14 @@ bool GomokuRule::checkDoubleFour(const Move &horizontal, const Move &vertical, c
         counter++;
     }
     return counter > 1;
+}
+
+bool GomokuRule::checkSixInARow(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const
+{
+    return (horizontal.counter == 6 && horizontal.isConnected) ||
+           (vertical.counter == 6 && vertical.isConnected) ||
+           (leftDiagonal.counter == 6 && leftDiagonal.isConnected) ||
+           (rightDiagonal.counter == 6 && rightDiagonal.isConnected);
 }
 
 bool GomokuRule::checkIfStonePlacedAt(unsigned int x, unsigned int y)

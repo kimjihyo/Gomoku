@@ -31,13 +31,15 @@ public:
     bool GetIsGameEnded() const;
     bool GetRuleType() const;
     const std::vector<Stone *> &GetFiveStonesInRow() const;
+    bool IsForbidden(unsigned int x, unsigned int y, unsigned int stoneType) const;
 
 private:
-    Move checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
-    Move checkVertical(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
-    Move checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
-    Move checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
-    bool checkDoubleThree(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal);
-    bool checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal);
+    Move checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const;
+    Move checkVertical(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const;
+    Move checkLeftDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const;
+    Move checkRightDiagonal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const;
+    bool checkDoubleThree(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const;
+    bool checkDoubleFour(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const;
+    bool checkSixInARow(const Move &horizontal, const Move &vertical, const Move &leftDiagonal, const Move &rightDiagonal) const;
     bool checkIfStonePlacedAt(unsigned int pivotX, unsigned int pivotY);
 };

@@ -21,6 +21,7 @@ private:
     GomokuRule gomokuRule;
     GomokuReader reader;
     std::vector<Stone*> stonesInOrder;
+    std::vector<sf::RectangleShape*> forbiddenSpots;
     sf::RectangleShape indicator;
     
     int counter;
@@ -49,4 +50,6 @@ private:
     void placeStonesFromIntegerMatrix(int (*matrix)[Board::NUM_LINES]);
     void exportCurrentKiboToIntegerMatrix(int (*matrix)[Board::NUM_LINES]) const;
     bool checkIfInsideBoard(const sf::Vector2i& position) const;
+    void drawMarkerAtForbiddenSpots();
+    void resetMarkersAtForbiddenSpots();
 };
