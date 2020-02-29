@@ -16,7 +16,6 @@ class GomokuRule
 {
 private:
     Stone *(*m_Stones)[Board::NUM_LINES];
-    std::vector<Stone *> m_FiveStonesInRow;
     bool m_IsGameEnded;
     RuleType m_RuleType;
 
@@ -27,11 +26,9 @@ public:
     void Reset();
     void SetStones(Stone *stones[][Board::NUM_LINES]);
     void SetRuleType(RuleType ruleType);
-    bool MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType);
+    bool MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType, bool shouldPrintDetails=true);
     bool GetIsGameEnded() const;
     bool GetRuleType() const;
-    const std::vector<Stone *> &GetFiveStonesInRow() const;
-    bool IsForbidden(unsigned int x, unsigned int y, unsigned int stoneType) const;
 
 private:
     Move checkHorizontal(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType) const;

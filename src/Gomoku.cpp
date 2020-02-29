@@ -263,7 +263,7 @@ bool Gomoku::placeStone()
                                                                      ++counter, stoneIndex.x, stoneIndex.y);
                 this->stones[stoneIndex.y][stoneIndex.x]->EnableLabel(font);
                 this->stonesInOrder.push_back(this->stones[stoneIndex.y][stoneIndex.x]);
-                if (counter % 2 == 0)
+                if (counter % 2 == 0 && !this->gomokuRule.GetIsGameEnded())
                 {
                     this->drawMarkerAtForbiddenSpots();
                 }
@@ -361,7 +361,7 @@ void Gomoku::drawMarkerAtForbiddenSpots()
         {
             if (this->stones[y][x] == nullptr)
             {
-                bool result = this->gomokuRule.MakeMove(x, y, (counter + 1) % 2);
+                bool result = this->gomokuRule.MakeMove(x, y, (counter + 1) % 2, false);
 
                 if (!result)
                 {

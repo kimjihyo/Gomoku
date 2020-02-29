@@ -4,6 +4,6 @@
 
 int main()
 {
-    Gomoku gomoku(1200, 1200);
+    Gomoku gomoku(1920, 1290);
     gomoku.StartGame();
 }

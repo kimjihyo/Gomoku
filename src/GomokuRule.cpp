@@ -17,7 +17,6 @@ GomokuRule::~GomokuRule()
 
 void GomokuRule::Reset()
 {
-    m_FiveStonesInRow.clear();
     m_IsGameEnded = false;
 }
 
@@ -31,12 +30,28 @@ void GomokuRule::SetRuleType(RuleType ruleType)
     m_RuleType = ruleType;
 }
 
-bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType)
+bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int stoneType, bool shouldPrintDetails)
 {
     Move horizontalMove = this->checkHorizontal(pivotX, pivotY, stoneType);
     Move verticalMove = this->checkVertical(pivotX, pivotY, stoneType);
     Move leftDiagonalMove = this->checkLeftDiagonal(pivotX, pivotY, stoneType);
     Move rightDiagonalMove = this->checkRightDiagonal(pivotX, pivotY, stoneType);
+
+    if (shouldPrintDetails)
+    {
+        if (stoneType == 1)
+        {
+            std::cout << "BLACK" << std::endl;
+        }
+        else
+        {
+            std::cout << "WHITE" << std::endl;
+        }
+        std::cout << "horizontalMove: " << horizontalMove.counter << " isOpen: " << horizontalMove.isOpen << " isConnected: " << horizontalMove.isConnected << std::endl;
+        std::cout << "verticalMove: " << verticalMove.counter << " isOpen: " << verticalMove.isOpen << " isConnected: " << verticalMove.isConnected << std::endl;
+        std::cout << "leftDiagonalMove: " << leftDiagonalMove.counter << " isOpen: " << leftDiagonalMove.isOpen << " isConnected: " << leftDiagonalMove.isConnected << std::endl;
+        std::cout << "rightDiagonalMove: " << rightDiagonalMove.counter << " isOpen: " << rightDiagonalMove.isOpen << " isConnected: " << rightDiagonalMove.isConnected << std::endl;
+    }
 
     m_IsGameEnded = (horizontalMove.counter == 5 && horizontalMove.isConnected) ||
                     (verticalMove.counter == 5 && verticalMove.isConnected) ||
@@ -65,11 +80,6 @@ bool GomokuRule::MakeMove(unsigned int pivotX, unsigned int pivotY, unsigned int
 bool GomokuRule::GetIsGameEnded() const
 {
     return m_IsGameEnded;
-}
-
-const std::vector<Stone *> &GomokuRule::GetFiveStonesInRow() const
-{
-    return m_FiveStonesInRow;
 }
 
 bool GomokuRule::GetRuleType() const
