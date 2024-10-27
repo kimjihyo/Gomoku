@@ -4,7 +4,7 @@
 
 ### How to build the project
 It is required to have FreeType library downloaded to build the program. <br>
-If it is not installed on your device (Mac), Execute the following command in the terminal.
+If it is not installed on your device (Mac), Execute the following command in the terminal
 ```
 brew install freetype
 ```
